@@ -1,0 +1,347 @@
+22/04/2020
+-Started project, began experimenting with Fragments and ViewModels with NavigationMenus(?).
+ Started with 'HomeFragment.java', 'GalleryFragment.java', 'Slideshow.java' and 'MainActivity.java'
+ as well as corresponding .xml layout files and viewmodel .java files. .xml layout files were
+ also pre-created for the sidebar fragments as well.
+
+23/04/2020
+-[NOTE] ViewModels are used as a way to allow Fragments to communitcate to each other, as they
+ should never communicate with each other directly.
+-Added new .java file; 'ViewModel1.java' was added. This will be used as the central communicator
+ between the fragments. It will be renameed at a later date once the testing phase is over.
+
+25/04/2020
+-Added base layout to 'fragment_home.xml'
+-Altered code in 'HomeFragment.java'; added code to set the size of the ImageViews for the grid
+
+26/04/2020
+-Altered code in 'HomeFragment.java'; added framework of code that allows drag and drop
+
+27/04/2020
+-Altered code in 'HomeFragment.java'; used code from 
+ 'https://stackoverflow.com/questions/30408606/how-to-swap-two-image-views-using-drag-and-drop-in-android'
+ to get a working drag and drop. This seems to work nicely, though more testing will be needed.
+-Altered code in 'HomeFragment.java'; used code from 'https://developer.android.com/guide/topics/graphics/drawables'
+ to find out how to alter the drag shadow and make it an image. This is so I can achieve the look of dragging the
+ particular T-Doll being selected. The selected T-Doll 'ImageView' also disappears from the grid when it is being
+ dragged to further make it look as though she has been moved and not duplicated.
+-Added new class; made 'DragShadow', which was in 'HomeFragment.java', it's own class by replacing the code inside
+ the existing class/.java file 'DragShadowBuilder.java'. The class is now referred to as 'DragShadowBuilder.java'.
+-Added background image from the Brainlet.moe grid and set it as the background for the grid in the project. Adding
+ the background caused the grid to become too long so the same code that is used to evenly space out the 'ImageViews'
+ is used to set the grid with the background. This however, leads to another issue where the 'ImageViews' are out of
+ alignment when the screen rotates, even though the grid background is fine. This needs to be tested further.
+
+29/04/2020
+-Added in layout for echelon selection; created the layout for displaying the T-Dolls stats
+
+10/05/2020
+-Finished reformatting base layout for echelon selection; made the layout slimmer in order to save on screen space
+-Added 'Calculation.java' class; this wil be used for the calculations
+
+26/05/2020
+-Added new function to 'MainActivity.java': the function 'SetUp()' will be used to initialise things,
+ such as echelons equipment stats and user preferences.
+-Added new functions to 'Calculation.java': 'int FairyGrowthFactor_Basic(String)' and 'float
+ FairyGrowthFactor_Basic(String)' these functions will be used in place of the 'FAIRY_GROWTH_FACTOR'
+ object.
+-Added 'Utils.java' class; this will be used to handle stuff such as growth factors, setting up
+ optimal equipment, etc.
+-Moved growth factors functions in 'Calculation.java' to 'Utils.java'
+-Added new function 'LoadDollData(Context)' to 'Utils.java'; this is to make sure the data for the
+ dolls is loaded in properly.
+-Added 'Dolls.java' class; this will be used to hold the information of the dolls once they're loaded in
+-Added 'Echelon.java' class; this will be used to hold the dolls and the fairy once they have been
+ selected by the user.
+-Added new function 'LoadJSON(Context)'; this is to load in the JSON files so that they can be used
+
+27/05/2020
+-Implemented method for retrieving information from JSON file
+-Added constructor for 'Dolls.java' class; this constructor takes in a JSONObject which contains the
+ data of a single T-Doll.
+-Added getters for 'int' values in 'Dolls.java'
+
+28/05/2020
+-Added the string variables for doll data in 'Dolls.java'
+-Fully added in the rest of the variables needed to handle all of the data being extracted from the
+ 'dolls.json' file for individual dolls.
+ The getters needed to retrieve the data for each doll from the class have been added as well.
+-Added new function 'Update()' to 'HomeFragment.java'; this is called whenever a change is made,
+ like a formation change, in order to update, the information being displayed to the user.
+-Implemented method in which the data displayed cycles through each doll when a button is pressed.
+ This will be the basis of displaying correct data for the desired doll chosen by the user.
+-Reworked the 'stats' layout for displaying the selected dolls data; spinners have been added to
+ allow the user to select the doll/skill level from a pre-determined list, as well as a toggle switch
+ to determine whether the skill is active or not. Labels have also been added.
+-Renamed 'Doll' to 'selected_doll' and renamed 'echelon' RelativeLayout to 'formation'. A new
+ RelativeLayout called 'echelon' has been added besides 'selected_doll'. This will display the rest
+ of the T-Dolls and the fairy that have been added to the users echelon.
+-Added all images for T-Dolls. These have been renamed 'doll_x' to allow Android Studio to use them.
+ This may lead to issues when referring to them using the original JS code method.
+
+29/05/2020
+-Managed to implement Bottom Modal Sheet; this tpye of dialog pop up will be used to display things
+ for selection, such as T-Dolls or equipment.
+-Managed to implement basic T-Doll selection using BMS; this method doesn't seem to be the cleanest
+ of solutions but it seems to work for now.
+-Started to migrate to new project; this project is a Basic Project as I have no real need for the
+ extra functionality the current one provides. Also, trying to make it work the way I want is proving
+ to be more hassle than what it's worth.
+-Finished project migration
+-Made a rough layout for 'bottom_sheet.xml'
+-Added new function 'getAllDollData()' to 'Utils.java'; this is going to be used to pass the entire
+ doll data to 'SelectionFragment.java' so it has access to the T-Dolls' images to display them.
+
+30/05/2020
+-Renamed class 'Dolls.java' to 'Doll.java'; this better reflects it's purpose, as each instance of the
+ class holds one T-Doll.
+-Started adding necessary functions to 'Echeclon.java' class, such as the constructor, getters and
+ setters, along with the variables needed.
+
+31/05/2020
+-Renamed class 'MainActivity.java' to 'UI.java'
+-Altered function 'onDollSelected(int)' in 'SelectionFragment.java'; this has been altered so that
+ it takes an extra 'int' as well. This is because the function will use this extra parameter to
+ determine which 'ImageView' to link to the selected doll.
+-Altered test function 'update2(int)' in 'SelectionFragment.java'; this now takes two 'int's instead
+ of one. This is so the function can update the image of the selection button to match the doll selected,
+ by using the corresponding echelon position.
+-Renamed 'test' function to 'setUp' in 'SelectionFragment.java'; this is to better reflect it's use
+-Altered 'addDoll(int, Doll)' function in 'Echelon.java'; it now takes another 'int' and a 'ImageView'
+ parameter. This is so it can set the grid position and ImageView corresponding to the T-Dolls position.
+-The grid now changes pictures depending on which T-Doll is chosen by the user. However, it only
+ affects position 8 on the grid.
+-Created new constructor for 'Doll.java'; this doesn't take any parameters and is used to make null
+ T-Dolls that will be used for empty spaces on the grid to allow them to swap places with actual T-Dolls.
+ They'll also be used to fill in empty spaces in the echelon.
+-Altered 'Echelon.java' constructor; it now takes 'ImageViews[]' as a parameter. This is so it can assign
+ each empty slot in the echelon a place on the grid. In order to make this work, echelon is initialised
+ in the 'setImageViews(boolean)' function in 'UI.java'.
+
+01/06/2020
+-Added new function 'updateGrid()' to 'UI.java' class; this is used to update the ImageViews so the
+ grid reflects the T-Dolls' positions after moving them.
+-Implemented swapping T-Doll functionality; there is still the issue of dolls being overwritten if they
+ are occupying the grid position of an incoming doll e.g. If a T-Doll was selected using the bottom
+ slot and a T-Doll was occupying grid position 5, the new T-Doll would take over her space on the grid.
+-Added new function 'checkGrid(Doll, int, ImageView)' to 'Echelon.java' class; this will be used to
+ make sure that T-Dolls positions don't overlap when added, fixing the above issue.
+-Altered 'Echelon.java' class constructor; it now takes 'UI.java' as a parameter. This is so it
+ reassign a 'TextView' if the one needed for the new T-Doll is occupied. FIND A WAY TO MAKE THIS WORK
+ WITHOUT PASSING THROUGH UI.JAVA
+-Added new function 'setGridPosition(int)' to 'Doll.java' class; this makes altering empty doll
+ grid positions easier.
+-Added new function 'onClick(View)' to 'UI.java' class; this is an override class that will be used
+ to handle all the onClick functionality for the 'UI.java' class. It will replace 'Listeners()'.
+-Added grid positions to 'onClick(View)' function; this is to allow the user to view the stats of the
+ doll by clicking on them.
+-Added new function 'displayStats(int, View)' to 'UI.java' class; this is to allow the functionality mentioned
+ above to work.
+-Added getter and setter for int 'echelonPosition' in 'Doll.java' class; this makes it easier to
+ display stats by being able to determine which T-Doll was chosen using her gridImageView and then
+ using her echelon position to find her specific stats.
+-Added temporary function 'update3(int, int)' to 'UI.java' class; this is strictly for testing the
+ stat display and will be removed after the test is successful (kinda make the actual 'test' function
+ useless...).
+-Implemented stat display
+-Renamed 'test()' to 'setUp' in 'UI.java' class; this is to better reflect it's new use
+-Added new function 'IDtoInt(View)' to 'UI.java' class; this is a slightly modified version of
+ 'getGridTextViewPosition(ImageView)' that basically returns an 'int' based on the view that is passed
+ in, not just ImageViews, so it can work for more things.
+-Removed 'getDrigTextViewPosition(ImageView' from 'UI.java' class
+-Renamed 'update2(int, int)' to 'updateEchelon(int, int)' in 'UI.java' class; this function will now
+ be used to add T-Dolls to the echelon.
+-Removed 'update3(int, int)' from 'UI.java' class
+-Removed 'Listeners()' from 'UI.java' class
+-Commented out 'Update()' from 'UI.java' class
+-Reverted 'Echelon.java' class' constructor back to the way it was; it now no longer takes 'UI.java'
+ as a parameter.
+-Removed 'ImageView' parameter fro 'checkGrid(Doll, int, ImageView)' function in 'Echelon.java'; this
+ was no longer needed.
+-Added code that alters the appearance of the grid during the dragging process; the position that is
+ being hovered over will change colour and opacity, then revert to normal when it is no longer being
+ hovered over. This doesn't apply to the selected position.
+-Altered 'DragShadowBuilder.java' constructor; it now takes 'Echelon.java' as a parameter. This will
+ be used to get the images needed for the drag shadows.
+-Changed drag shadow to the image of the T-Doll occupying the grid position being dragged
+
+02/06/2020
+-Added new function 'getDollsTiles(JSONObject)' to 'Utils.java' class; this is to extract the information
+ for the selected T-Doll's tile buffs and convert them into a format that is easier to use in my code.
+-Added new function 'getDollsTilesFormation(int, int)' to 'Utils.java' class; this is to use the
+ information extracted from the JSON file using 'getDollsTiles(JSONObject)' and convert it into
+ a format than can be used to display the tiles and apply their buffs.
+
+03/06/202
+-Renamed 'getDollsTiles(JSONObject)' to 'setUpDollTiles(JSONObject)'; this is to better reflect it's
+ purpose.
+-Renamed 'getTiles()' in 'Doll.java' class to 'getRawTiles()'; this is to better reflect it's use
+-Added new function 'getTilesFormation()' to 'Doll.java' class; this is to get the tile formation of the
+ doll after it has been extracted from the JSONObject it was previously.
+-Altered function 'setUpDollTiles(JSONObject)' in 'Utils.java' class; it's parameter is now 'Doll'.
+ This is so the set up can take place without having to save extracted information inside 'Utils.java'
+ and so 'Doll.java' doesn't have access to 'Utils.java'.
+-Reverted 'setUPDollTiles(JSONObject)' back to it's original name; this is due to the fact that it is
+ once again a getter that returns a 2D array that contains the information of the tiles for the passed
+ in T-Doll.
+-Renamed 'getDollTilesFormation(int, int)' to 'setUpDollTilesFormation(int, int[])'; this is due to the
+ above change.
+-Added new function 'setTiles(int[][])' to 'Doll.java' class; this is to be used with 'Utils.java's
+ functions to set up the tiles properly from the JSONObject that 'Doll.java' has
+-Moved 'IDtoINT(View)' from 'UI.java' to 'Utils.java'; this function is more of a utility that could
+ be of use across the program, meaning it would be better suited to be in the 'Utils.java' class
+
+ #TESTS WILL BE DOCUMENTED FROM THIS POINT#
+
+-Added haptic feedback when user starts a drag and drop on the grid, constant set to '1' (No idea what
+ the fuck this does XD)
+
+-Haptic feedback Test #1 Result: Phone didn't vibrate at all
+    -Action taken: Added permission to allow vibrations in the 'AndroidManifest.xml' and added line of code to enable
+    haptic feedback in 'OnLongClickListener'.
+
+-Haptic feedback Test #2 Result: Phone didn't vibrate at all
+    -Action taken: Added 'HapticFeedbackConstants.VIRTUAL_KEY' and 'HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING'
+    as parameters for the 'performHapticFeedback(int, int)' function
+-Haptic feedback Test #3 Result: Phone vibrated
+
+-Added code to enable the square the user started the drag to change colour, essentially behaving like
+ the rest of the grid. Code was added to the 'DragEvent.ACTION_DRAG_ENTERED' part of the switch in the
+ 'OnDragListener'
+
+-Colour change Test #1 Result: Square didn't change colour but the others did
+    -Action taken: Moved code outside the switch
+
+-Colour change test #2 Result: Square didn't change colour. However all the other square changed when the drag started,
+ changing back to their default state after the drag had passed over them. Once the drag had ended,
+ all the squares changed colour and remained that way until the drag started again and they were
+ passed over.
+    -Action taken: Added 'DragEvent.ACTION_DRAG_STARTED' case to switch. Due to the code in the cases
+    being the same, this case was paired up with 'DragEvent.ACTION_DRAG_LOCATION'.
+
+-Colour change test #3 Result: Same results as test #2, except the app crashes when the user tries to
+ drag again. This was due to the 'View' being null (not sure why this is, just gonna roll with it)
+    -Action taken: Separated the two cases
+
+-Colour change test #4 Result: Same results as test #3
+    -Action taken: Removed  'DragEvent.ACTION_DRAG_STARTED' case and stopped dragged view from
+    being invisible in the 'DragEvent.ACTION_DRAG_ENTERED' case
+
+-Colour change test #5 Result: The starting position changes colour but doesn't change back on the user
+ has moved to a different square. The square will only revert back if the user ends the drag where they
+ started. If the user tries to drag the solid blue square, the program crashes due to a null error again.
+ Apparently this is caused due to 'pic' being null.
+    -Action taken: Changed 'dragged's state from visible to invisible in the 'DragEvent.ACTION_DRAG_EXITED' case
+
+-Colour change test #6 Result: Same results as test #5
+    -Action taken: Due to there being an error caused by 'pic' not being initialised in 'DragShadowBuilder.java',
+    I've added code that sets the image to a stock image. This error occurs when the user drags an
+    empty grid position that is assigned to a null doll, as the null dolls don't have images to get,
+    therefore pic doesn't have anything to have assigned to it. Also, code has been added to the
+    'case DragEvent.ACTION_DROP' that reverts the dragged view's background back to being transparent.
+
+-Colour change test #7 Result: Blue squares no longer remain after drag has finished and the starting position
+ changes colour but only when the drag starts. If the user drags over the view once they've left, the
+ position will not change colour.
+    -Action taken: Set the dragged view's visibility to 'visible' in the 'DragEvent.ACTION_DRAG_ENTERED'
+    case.
+
+-Colour change test #8 Result: Colours change as intended but the starting position remains a solid blue until
+ the user has stopped dragging.
+    -Action taken: Added code that sets the dragged view's background to 'transparent' in the
+    'DragEvent.ACTION_DRAG_EXITED' case.
+
+-Colour change test #9 Result: Same results as test #8
+    -Action taken: Removed code that sets the dragged view's colour to blue from the
+    'DragEvent.ACTION_DRAG_ENTERED' case.
+
+-Colour change test #10 Result: Colours change as intended
+
+#FUCK WRITING OUT TEST RESULTS. SHIT TAKES TOO LONG#
+
+-Added new function 'EchelonPositionToViewID(int)' to 'Utils.java'; this is so the T-Dolls can get
+ the tiles they need for tile buffs.
+
+ 04/06/2020
+-Added new function 'displayDollGrid(View)' to 'UI.java'; this is to display the T-Doll grid formation
+ (the clue is in the name but you know, dev log :3 )
+#USE THE METHOD FOR T-DOLL TILES IN THE PYTHON FILE FOR FINDING TILE POSITIONS#
+-Altered function 'setUpDollTilesFormation(int, int[])' in 'Utils.java'; this now uses the same method
+ as the one found in the original Python file that was used to help create the JSON file containing
+ the T-Doll information, but in reverse, to get the tile positions relative to the buffing T-Doll.
+-Implemented T-Doll tile display. However the tiles are not relative to the T-Doll and the tiles don't
+ disappear unless they are dragged over.
+-Altered function 'getDollTilesFormation(Doll)' in 'Utils.java'; the return line no longer uses
+ the 'setUpDollTilesFormation(int, int[])'. This is due to the tiles no longer being converted before
+ they're returned. This makes the 'setUpDollTilesFormation(int, int[])' not needed in the way that it
+ is used. 'setUpDollTilesFormation(int, int[])' will be re-purposed.
+
+05/06/2020
+-Renamed 'setUpDollTilesFormation(int, int[])' and 'getDollTilesFormation(Doll)'; they have had their
+ names swapped. This is to better reflect their uses.
+-Implemented tile display for selected T-Doll
+-Altered 'Echelon.java' constructor; it now takes 'Utils.java' as a parameter. This is so setting up
+ the newly added T-Doll's tiles can be done inside 'Echelon.javas's 'addDoll(int, Doll, int, ImageView)'
+ function instead of it being doing outside in 'UI.java'.
+-Altered function 'addDoll(int, Doll, int, ImageView)' in 'Echelon.java'; removed the 'ImageView'
+ parameter as it was redundant due to previous changes.
+
+06/06/2020
+-Altered function 'addDoll(int, Doll, int)' in 'Echelon.java'; removed one of the 'int' parameters
+ as it is redundant. It also has code which checks the echelon to make sure the T-Doll being added
+ isn't already in the echelon. If the T-Doll is already in the echelon, their position is swapped.
+-Renamed function 'updateGrid()' to 'updateUI()' in 'UI.java'; this is so it better reflects it's
+ use, as it now updates more than just the grid.
+
+ #TEST FUNCTION IS CURRENTLY BEING USED TO TEST T-DOLL DETECTION ON TILES THAT BUFF THEM#
+
+
+Grid key for JSON file
+
+|7|8|9|
+|4|5|6|
+|1|2|3|
+
+Self
+14 = 9
+24 = 6
+34 = 3
+13 = 8
+23 = 5
+33 = 2
+12 = 7
+22 = 4
+32 = 1
+
+
+Assuming T-Doll is in position 5
+  1 = Front                 | 1 = 6  |   1 = 9
+ -1 = Behind                |-1 = 4  |   2 = 10
+
+ 10 = Below                 | 10 = 2 |   3 = 11
+-10 = Above                 |-10 = 8 |   4 = -1
+
+ -9 = Upper right corner    |-9 = 9  |   6 = 1
+  9 = Lower left corner     | 9 = 1  |   7 = -11
+
+ 11 = Lower right corner    | 11 = 3 |   8 = -10
+-11 = Upper left corner     |-11 = 7 |   9 = -9
+
+|7|8|9|
+|4|5|6|
+|1|2|3|
+
+  2 = Front column, directly in front (T-Doll in pos 4, tile buff is in pos 6)
+ 12 = Front column, directly in front, 1 down (T-Doll in pos 4, tile buff in pos 3)
+ 22 = Front column, directly in front, 2 down (T-Doll in pos 7, tile buff in pos 3)
+ -8 = Front column, directly in front, 1 above (T-Doll in pos 7, tile buff in pos 3)
+-18 = Front column, directly in front, 2 above (T-Doll in pos 1, tile buff in pos 9)
+
+  8 = Back column, directly behind, 1 below (T-Doll in pos 6, tile buff is in pos 1)
+ 18 = Back column, directly behind, 2 below (T-Doll in pos 9, tile buff is in pos 1)
+-12 = Back column, directly behind, 1 above (T-Doll in pos 6, tile buff is in pos 7)
+-22 = Back column, directly behind, 2 above (T-Doll in pos 3, tile buff is in pos 7)
+ -2 = Back column, directly behind (T-Doll in pos9, tile buff is in pos 7)
+
+
+
