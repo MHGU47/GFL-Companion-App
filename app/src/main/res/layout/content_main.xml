@@ -112,6 +112,8 @@
             android:layout_below="@id/grid">
 
             <!--Selected Doll-->
+
+            <!--Echelon-->
             <RelativeLayout
                 android:id="@+id/selected_doll"
                 android:layout_width="150dp"
@@ -156,7 +158,8 @@
                         <Spinner
                             android:id="@+id/level_select"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/level_label" />
 
                         <TextView
                             android:id="@+id/level_label"
@@ -177,7 +180,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
-                            android:layout_alignParentEnd="true" />
+                            android:layout_alignParentEnd="true"
+                            android:layout_toRightOf="@id/skill_level_label" />
 
                         <Switch
                             android:id="@+id/skill_active_check"
@@ -493,7 +497,6 @@
 
             </RelativeLayout>
 
-            <!--Echelon-->
             <RelativeLayout
                 android:id="@+id/echelon"
                 android:layout_width="wrap_content"
@@ -546,6 +549,51 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/adddoll" />
 
+                <ImageView
+                    android:id="@+id/removeDoll_1"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignBottom="@id/doll_1"
+                    android:layout_toRightOf="@id/doll_1"
+                    android:onClick="onClick"
+                    app:srcCompat="@drawable/removedoll" />
+
+                <ImageView
+                    android:id="@+id/removeDoll_2"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignBottom="@id/doll_2"
+                    android:layout_toRightOf="@id/doll_2"
+                    android:onClick="onClick"
+                    app:srcCompat="@drawable/removedoll" />
+
+                <ImageView
+                    android:id="@+id/removeDoll_3"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignBottom="@id/doll_3"
+                    android:layout_toRightOf="@id/doll_3"
+                    android:onClick="onClick"
+                    app:srcCompat="@drawable/removedoll" />
+
+                <ImageView
+                    android:id="@+id/removeDoll_4"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignBottom="@id/doll_4"
+                    android:layout_toRightOf="@id/doll_4"
+                    android:onClick="onClick"
+                    app:srcCompat="@drawable/removedoll" />
+
+                <ImageView
+                    android:id="@+id/removeDoll_5"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignBottom="@id/doll_5"
+                    android:layout_toRightOf="@id/doll_5"
+                    android:onClick="onClick"
+                    app:srcCompat="@drawable/removedoll" />
+
             </RelativeLayout>
 
         </RelativeLayout>
@@ -556,7 +604,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/formation"
             android:onClick="onClick"
-            android:text="Button" />
+            android:text="Test" />
 
 </RelativeLayout>
 </ScrollView>

@@ -10,7 +10,8 @@ import org.json.JSONObject;
 public class Doll {
 
     private int id, id_index, spritesheet_row, spritesheet_col, rarity, type, hp, fp, acc, eva, rof, crit,
-            critdmg, ap, rounds, armour, growth_rating, construct_time, gridPosition, echelonPosition;
+            critdmg, ap, rounds, armour, growth_rating, construct_time, gridPosition, echelonPosition,
+            level, skillLevel;
 
     private JSONArray aliases;
 
@@ -40,6 +41,7 @@ public class Doll {
             spritesheet_col = (int) DollData.get("spritesheet_col");
             name = (String) DollData.get("name");
             rarity = (int) DollData.get("rarity");
+            level = 1;
             type = (int) DollData.get("type");
             mod = (boolean) DollData.get("mod");
             hp = (int) DollData.get("hp");
@@ -80,6 +82,50 @@ public class Doll {
 
     }
 
+    Doll(Doll newDoll){
+        this.id = newDoll.getID();
+        this.id_index = newDoll.getId_index();
+        this.spritesheet_row = newDoll.getSpritesheet_row();
+        this.spritesheet_col = newDoll.getSpritesheet_col();
+        this.rarity = newDoll.getRarity();
+        this.type = newDoll.getType();
+        this.hp = newDoll.getHp();
+        this.fp = newDoll.getFp();
+        this.acc = newDoll.getAcc();
+        this.eva = newDoll.getEva();
+        this.rof = newDoll.getCrit();
+        this.crit = newDoll.getCrit();
+        this.critdmg = newDoll.getCritdmg();
+        this.ap = newDoll.getAp();
+        this.rounds = newDoll.getRounds();
+        this.armour = newDoll.getArmour();
+        this.growth_rating = newDoll.getGrowth_rating();
+        this.construct_time = newDoll.getConstruct_time();
+        this.gridPosition = newDoll.getGridPosition();
+        this.echelonPosition = newDoll.getEchelonPosition();
+        this.level = newDoll.getLevel();
+        this.skillLevel = newDoll.getSkillLevel();
+        this.aliases = newDoll.getAliases();
+        this.api_name = newDoll.getApi_name();
+        this.name = newDoll.getName();
+        this.artist = newDoll.getArtist();
+        this.voice = newDoll.getVoice();
+        this.name_skill_1 = newDoll.getName_skill_1();
+        this.icon_name_skill_1 = newDoll.getIcon_name_skill_1();
+        this.tooltip_skill_1 = newDoll.getTooltip_skill_1();
+        this.tooltip_skill_2 = newDoll.getTooltip_skill_2();
+        this.tooltip_tiles = newDoll.getTooltip_tiles();
+        this.image = newDoll.getImage();
+        this.mod = newDoll.getMod();
+        this.en_craftable = newDoll.getEn_craftable();
+        this.en_released = newDoll.getEn_released();
+        this.skill = newDoll.getSkill();
+        this.tiles = newDoll.getRawTiles();
+        this.gridPosition_imageview = newDoll.getGridImageView();
+        this.tilesFormation = newDoll.getTilesFormation();
+        this.tilesBuffs = getTilesBuffs();
+    }
+
     public Doll(){
         setNull();
     }
@@ -93,6 +139,7 @@ public class Doll {
         spritesheet_col = 0;
         name = "";
         rarity = 0;
+        level = 0;
         type = 0;
         mod = true;
         hp = 0;
@@ -144,46 +191,90 @@ public class Doll {
         return rarity;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    public int getLevel() {
+        return level;
+    }
+
+    public void setSkillLevel(int skillLevel) {
+        this.skillLevel = skillLevel;
+    }
+    public int getSkillLevel() {
+        return skillLevel;
+    }
+
     public int getType() {
         return type;
     }
 
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
     public int getHp() {
         return hp;
     }
 
+    public void setFp(int fp) {
+        this.fp = fp;
+    }
     public int getFp() {
         return fp;
     }
 
+    public void setAcc(int acc) {
+        this.acc = acc;
+    }
     public int getAcc() {
         return acc;
     }
 
+    public void setEva(int eva) {
+        this.eva = eva;
+    }
     public int getEva() {
         return eva;
     }
 
+    public void setRof(int rof) {
+        this.rof = rof;
+    }
     public int getRof() {
         return rof;
     }
 
+    public void setCrit(int crit) {
+        this.crit = crit;
+    }
     public int getCrit() {
         return crit;
     }
 
+    public void setCritdmg(int critdmg) {
+        this.critdmg = critdmg;
+    }
     public int getCritdmg() {
         return critdmg;
     }
 
+    public void setAp(int ap) {
+        this.ap = ap;
+    }
     public int getAp() {
         return ap;
     }
 
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
     public int getRounds() {
         return rounds;
     }
 
+    public void setArmour(int armour) {
+        this.armour = armour;
+    }
     public int getArmour() {
         return armour;
     }

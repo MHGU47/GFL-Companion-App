@@ -42,32 +42,34 @@ public class Echelon {
         }
 
         if(swap){
-            //removeDoll(position);
-
             Doll temp = Dolls[echelonPosition - 1];
-            doll.setEchelonPosition(echelonPosition);
 
+            doll.setEchelonPosition(echelonPosition);
             doll.setTiles(u.setUpDollTilesFormation(doll));
             Dolls[doll.getEchelonPosition() - 1] = doll;
 
             Dolls[oldPosition - 1] = temp;
+            temp.setEchelonPosition(oldPosition);
             swapGridPosition(temp, Dolls[doll.getEchelonPosition() - 1]);
         }
         else{
             checkGrid(doll, echelonPosition);
-            doll.setEchelonPosition(echelonPosition);
+            Doll newDoll = new Doll(doll);
+            newDoll.setEchelonPosition(echelonPosition);
 
-            doll.setTiles(u.setUpDollTilesFormation(doll));
-            Dolls[doll.getEchelonPosition() - 1] = doll;
+            newDoll.setTiles(u.setUpDollTilesFormation(newDoll));
+            Dolls[newDoll.getEchelonPosition() - 1] = newDoll;
         }
     }
 
     public void removeDoll(int echelonPosition) {
         Dolls[echelonPosition - 1] = new Doll();
+        Dolls[echelonPosition - 1].setGrid(echelonPosition, imageViews[echelonPosition]);
+        checkGrid(Dolls[echelonPosition - 1], echelonPosition);
     }
 
-    public Doll getDoll(int echelonPosition) {
-        return Dolls[echelonPosition - 1];
+    public Doll getDoll(int index) {
+        return Dolls[index];
     }
     
     public Doll[] getAllDolls(){

@@ -1,8 +1,10 @@
 package com.shikikan.gflcompanionapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
+    private int highlight = Color.argb(25, 0, 255, 255);
     float[] FAIRY_RARITY_SCALARS = {0.4f, 0.5f, 0.6f, 0.8f, 1};
     private Doll[] Doll;
     private Map <Integer,Integer> positions = new HashMap<>();
@@ -40,6 +43,121 @@ public class Utils {
         positions.put(8, 13);
         positions.put(9, 14);
     }
+
+    private float[] TDollGrowthFactor(int level, String factor, boolean basic){
+        if(level > 100){
+            if(basic){
+                switch(factor){
+                    case "hp": return new float[] {55, 0.555f};
+                    case "armour": return new float[] {2, 0.161f};
+                    case "eva":
+                    case "acc": return new float[] {5};
+                    case "fp": return new float[] {16};
+                    default: return new float[] {45};
+                }
+            }
+            else{
+                switch(factor){
+                    case "eva":
+                    case "acc": return new float[] {0.303f, 0};
+                    case "fp": return new float[] {0.242f, 0};
+                    default: return new float[] {0.181f, 0};
+                }
+            }
+        }
+        else {
+            if(basic){
+                switch(factor){
+                    case "hp": return new float[] {96.283f, 0.138f};
+                    case "armour": return new float[] {13.979f, 0.04f};
+                    case "eva":
+                    case "acc": return new float[] {5};
+                    case "fp": return new float[] {16};
+                    default: return new float[] {45};
+                }
+            }
+            else{
+                switch(factor){
+                    case "eva":
+                    case "acc": return new float[] {0.075f, 22.572f};
+                    case "fp": return new float[] {0.06f, 18.018f};
+                    default: return new float[] {0.022f, 15.741f};
+                }
+            }
+        }
+    }
+
+    private float Scalars(int dollType, String scalar){
+        switch(dollType){
+            case 1:
+                switch (scalar){
+                    case "hp":
+                    case "fp": return 0.6f;
+                    case "rof": return 0.8f;
+                    case "acc": return 1.2f;
+                    case "eva": return 1.8f;
+                    default: return 0;
+                }
+            case 2:
+                switch (scalar){
+                    case "hp":
+                    case "eva": return 1.6f;
+                    case "fp": return 0.6f;
+                    case "rof": return 1.2f;
+                    case "acc": return 0.3f;
+                    default: return 0;
+                }
+            case 3:
+                switch (scalar){
+                    case "hp":
+                    case "eva": return 0.8f;
+                    case "fp": return 2.4f;
+                    case "rof": return 0.5f;
+                    case "acc": return 1.6f;
+                    default: return 0;
+                }
+            case 4:
+                if(!scalar.contains("armour")) return 1;
+                else return 0;
+            case 5:
+                switch (scalar){
+                    case "hp": return 1.5f;
+                    case "fp": return 1.8f;
+                    case "rof": return 1.6f;
+                    case "acc":
+                    case "eva": return 0.6f;
+                    default: return 0;
+                }
+            default:
+                switch (scalar){
+                    case "hp": return 2;
+                    case "fp": return 0.7f;
+                    case "rof": return 0.4f;
+                    case "acc":
+                    case "eva": return 0.3f;
+                    default: return 1;
+                }
+        }
+    }
+
+    public void levelchange(Doll doll){
+        doll.setHp((int) (Math.ceil((TDollGrowthFactor(doll.getLevel(), "hp", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "hp", true)[1])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getHp() / 100)) * 5);
+
+        doll.setFp((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "fp",true)[0] * Scalars(doll.getType(),"fp") * doll.getFp() / 100));
+        doll.setFp((int) (doll.getFp() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "fp", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "fp", false)[0])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getFp() * doll.getGrowth_rating() / 100 / 100))));
+
+        doll.setAcc((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "acc",true)[0] * Scalars(doll.getType(),"acc") * doll.getAcc() / 100));
+        doll.setAcc((int) (doll.getAcc() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "acc", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "acc", false)[0])) * Scalars(doll.getType(), "acc") * getDoll(doll.getID()).getAcc() * doll.getGrowth_rating() / 100 / 100))));
+
+        doll.setEva((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "eva",true)[0] * Scalars(doll.getType(),"eva") * doll.getEva() / 100));
+        doll.setEva((int) (doll.getEva() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "eva", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "eva", false)[0])) * Scalars(doll.getType(), "eva") * getDoll(doll.getID()).getEva() * doll.getGrowth_rating() / 100 / 100))));
+
+        doll.setRof((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "rof",true)[0] * Scalars(doll.getType(),"rof") * doll.getRof() / 100));
+        doll.setRof((int) (doll.getRof() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "rof", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "rof", false)[0])) * Scalars(doll.getType(), "rof") * getDoll(doll.getID()).getRof() * doll.getGrowth_rating() / 100 / 100))));
+
+        doll.setArmour((int) Math.ceil((TDollGrowthFactor(doll.getLevel(), "armour", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "armour", true)[1])) * Scalars(doll.getType(), "armour") * getDoll(doll.getID()).getArmour() / 100));
+    }
+
     public int FairyGrowthFactor_Basic(String factor){
         switch (factor){
             case "fp": return 7;
@@ -63,15 +181,20 @@ public class Utils {
     public int IDtoInt(View view) {
         switch (view.getId()){
             case R.id.doll_1:
-            case R.id.pos_1: return 1;
+            case R.id.pos_1:
+            case R.id.removeDoll_1: return 1;
             case R.id.doll_2:
-            case R.id.pos_2: return 2;
+            case R.id.pos_2:
+            case R.id.removeDoll_2: return 2;
             case R.id.doll_3:
-            case R.id.pos_3: return 3;
+            case R.id.pos_3:
+            case R.id.removeDoll_3: return 3;
             case R.id.doll_4:
-            case R.id.pos_4: return 4;
+            case R.id.pos_4:
+            case R.id.removeDoll_4: return 4;
             case R.id.doll_5:
-            case R.id.pos_5: return 5;
+            case R.id.pos_5:
+            case R.id.removeDoll_5: return 5;
             case R.id.pos_6: return 6;
             case R.id.pos_7: return 7;
             case R.id.pos_8: return 8;
@@ -334,7 +457,23 @@ public class Utils {
         return tileFormation;
     }
 
-    public void checkTiles(){
+    public int getHighlight(){
+        return highlight;
+    }
 
+    public void checkTiles(){
+//        int[] tiles;
+//        for(Doll doll : e.getAllDolls()){
+//            if(doll.getID() != 0){
+//                tiles = u.getDollTilesFormation(doll);
+//                //Doll[] temp = e.getAllDolls();
+//                for(Doll od : e.getAllDolls()){
+//                    for (int tile : tiles) {
+//                        if (od.getGridPosition() == tile)
+//                            findViewById(u.GridPositionToViewID(od.getGridPosition())).setBackgroundColor(Color.BLACK);
+//                    }
+//                }
+//            }
+//        }
     }
 }

@@ -20,19 +20,25 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class UI extends AppCompatActivity implements SelectionFragment.SelectionListener, View.OnClickListener {
+public class UI extends AppCompatActivity implements SelectionFragment.SelectionListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private ImageButton[] selectButtons;
     private String[] AllImageViewIDs = {"pos_1", "pos_2", "pos_3",
             "pos_4", "pos_5", "pos_6", "pos_7", "pos_8", "pos_9"};
-    private Utils u = new Utils();
     private TextView[] Stats;
+    private Spinner TDollLevelSelect, SkillLevelSelect;
+    private Utils u = new Utils();
     private Echelon e;
+    private int selectedDoll = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,20 +103,31 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     private void setUp() {
         u.LoadDollData(this);
         setImageViews(true);
-        Stats = new TextView[13];
+        Stats = new TextView[11];
         Stats[0] = findViewById(R.id.name_text);
-        Stats[1] = findViewById(R.id.level_label);
-        Stats[2] = findViewById(R.id.skill_level_label);
-        Stats[3] = findViewById(R.id.hp_text);
-        Stats[4] = findViewById(R.id.fp_text);
-        Stats[5] = findViewById(R.id.acc_text);
-        Stats[6] = findViewById(R.id.eva_text);
-        Stats[7] = findViewById(R.id.rof_text);
-        Stats[8] = findViewById(R.id.crit_text);
-        Stats[9] = findViewById(R.id.critDmg_text);
-        Stats[10] = findViewById(R.id.rounds_text);
-        Stats[11] = findViewById(R.id.armour_text);
-        Stats[12] = findViewById(R.id.ap_text);
+        Stats[1] = findViewById(R.id.hp_text);
+        Stats[2] = findViewById(R.id.fp_text);
+        Stats[3] = findViewById(R.id.acc_text);
+        Stats[4] = findViewById(R.id.eva_text);
+        Stats[5] = findViewById(R.id.rof_text);
+        Stats[6] = findViewById(R.id.crit_text);
+        Stats[7] = findViewById(R.id.critDmg_text);
+        Stats[8] = findViewById(R.id.rounds_text);
+        Stats[9] = findViewById(R.id.armour_text);
+        Stats[10] = findViewById(R.id.ap_text);
+
+        TDollLevelSelect = findViewById(R.id.level_select);
+        SkillLevelSelect = findViewById(R.id.skill_level_select);
+
+        ArrayAdapter TDollLevelAdapter = ArrayAdapter.createFromResource(this,R.array.tdoll_level,
+                android.R.layout.simple_spinner_dropdown_item);
+        TDollLevelSelect.setAdapter(TDollLevelAdapter);
+        TDollLevelSelect.setOnItemSelectedListener(this);
+
+        ArrayAdapter SkillLevelAdapter = ArrayAdapter.createFromResource(this,R.array.skill_level,
+                android.R.layout.simple_spinner_dropdown_item);
+        SkillLevelSelect.setAdapter(SkillLevelAdapter);
+        SkillLevelSelect.setOnItemSelectedListener(this);
 
         selectButtons = new ImageButton[]{findViewById(R.id.doll_1), findViewById(R.id.doll_2),
                 findViewById(R.id.doll_3), findViewById(R.id.doll_4), findViewById(R.id.doll_5)};
@@ -170,6 +187,12 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                 sf.setUp(u.getAllDolls(), UI.this, u.IDtoInt(v));
                 sf.show(getSupportFragmentManager(), "test");
                 break;
+            case R.id.removeDoll_1:
+            case R.id.removeDoll_2:
+            case R.id.removeDoll_3:
+            case R.id.removeDoll_4:
+            case R.id.removeDoll_5:
+                e.removeDoll(u.IDtoInt(v));
             case R.id.pos_1:
             case R.id.pos_2:
             case R.id.pos_3:
@@ -186,34 +209,78 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     }
 
     private void test(){
-        //u.getDollTilesFormation(e.getDoll(0));
         int[] tiles;
         for(Doll doll : e.getAllDolls()){
             if(doll.getID() != 0){
                 tiles = u.getDollTilesFormation(doll);
-                for(int tile : tiles){
-                    if(tile == doll.getGridPosition()) findViewById(u.GridPositionToViewID(doll.getGridPosition()));
+                for(Doll od : e.getAllDolls()){
+                    for (int tile : tiles) {
+                        if (od.getGridPosition() == tile)
+                            if ((od.getType() == doll.getTilesBuffs()[0] || doll.getTilesBuffs()[0] == 0) && od.getID() != 0)
+                                findViewById(u.GridPositionToViewID(od.getGridPosition())).setBackgroundColor(u.getHighlight());
+                    }
                 }
             }
         }
+
+        u.levelchange(e.getDoll(0));
     }
 
     public void displayStats(View gridImageView) {
+        selectedDoll = 0;
         for (Doll doll : e.getAllDolls()) {
-            if (doll.getGridImageView() == gridImageView) {
+            if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
                 Stats[0].setText(doll.getName());
-                Stats[1].setText(doll.getName());
-                Stats[2].setText(doll.getName());
-                Stats[3].setText(String.valueOf(doll.getHp()));
-                Stats[4].setText(String.valueOf(doll.getFp()));
-                Stats[5].setText(String.valueOf(doll.getAcc()));
-                Stats[6].setText(String.valueOf(doll.getEva()));
-                Stats[7].setText(String.valueOf(doll.getRof()));
-                Stats[8].setText(String.valueOf(doll.getCrit()));
-                Stats[9].setText(String.valueOf(doll.getCritdmg()));
-                Stats[10].setText(String.valueOf(doll.getRounds()));
-                Stats[11].setText(String.valueOf(doll.getArmour()));
-                Stats[12].setText(String.valueOf(doll.getAp()));
+                Stats[1].setText(String.valueOf(doll.getHp()));
+                Stats[2].setText(String.valueOf(doll.getFp()));
+                Stats[3].setText(String.valueOf(doll.getAcc()));
+                Stats[4].setText(String.valueOf(doll.getEva()));
+                Stats[5].setText(String.valueOf(doll.getRof()));
+                Stats[6].setText(String.valueOf(doll.getCrit()));
+                Stats[7].setText(String.valueOf(doll.getCritdmg()));
+                Stats[8].setText(String.valueOf(doll.getRounds()));
+                Stats[9].setText(String.valueOf(doll.getArmour()));
+                Stats[10].setText(String.valueOf(doll.getAp()));
+                Spinner t = findViewById(R.id.level_select);
+                switch (doll.getLevel()){
+                    case 1:
+                        t.setSelection(0);
+                        break;
+                    case 10:
+                        t.setSelection(1);
+                        break;
+                    case 20:
+                        t.setSelection(2);
+                        break;
+                    case 30:
+                        t.setSelection(3);
+                        break;
+                    case 40:
+                        t.setSelection(4);
+                        break;
+                    case 50:
+                        t.setSelection(5);
+                        break;
+                    case 60:
+                        t.setSelection(6);
+                        break;
+                    case 70:
+                        t.setSelection(7);
+                        break;
+                    case 80:
+                        t.setSelection(8);
+                        break;
+                    case 90:
+                        t.setSelection(9);
+                        break;
+                    case 100:
+                        t.setSelection(10);
+                        break;
+                    case 120:
+                        t.setSelection(11);
+                        break;
+                }
+                selectedDoll = doll.getEchelonPosition();
                 break;
             }
         }
@@ -236,7 +303,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     private void updateUI() {
         for (String ImageViewID : AllImageViewIDs) {
             ImageView t = findViewById(getResources().getIdentifier(ImageViewID, "id", getPackageName()));
-            t.setImageResource(getResources().getIdentifier("", "drawable", getPackageName()));
+            t.setImageResource(0);
             t.setBackgroundColor(Color.TRANSPARENT);
         }
 
@@ -258,8 +325,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                 int[] tiles = u.getDollTilesFormation(doll);
                 for (int ID : tiles) {
                     if (ID != 0) {
-                        ImageView imageView = findViewById(u.GridPositionToViewID(ID));
-                        imageView.setBackgroundColor(Color.BLUE);
+                        findViewById(u.GridPositionToViewID(ID)).setBackgroundColor(u.getHighlight());
                     }
                 }
                 break;
@@ -320,7 +386,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     break;
 
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    v.setBackgroundColor(Color.BLUE);
+                    v.setBackgroundColor(u.getHighlight());
                     v.setAlpha(0.5f);
                     break;
 
@@ -369,6 +435,27 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             return true;
         }
     };
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if(selectedDoll != 0){
+            switch (parent.getId()){
+                case R.id.level_select:
+                    String t = ((Spinner)findViewById(R.id.level_select)).getSelectedItem().toString();
+                    e.getDoll(selectedDoll - 1).setLevel(Integer.parseInt(t));
+                    break;
+                case R.id.skill_level_select:
+                    e.getDoll(selectedDoll - 1).setSkillLevel(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
+                    break;
+            }
+        }
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 
     /*private class DragShadow extends View.DragShadowBuilder
     {

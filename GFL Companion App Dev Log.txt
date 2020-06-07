@@ -285,6 +285,7 @@
  function instead of it being doing outside in 'UI.java'.
 -Altered function 'addDoll(int, Doll, int, ImageView)' in 'Echelon.java'; removed the 'ImageView'
  parameter as it was redundant due to previous changes.
+-Made GitHub repository
 
 06/06/2020
 -Altered function 'addDoll(int, Doll, int)' in 'Echelon.java'; removed one of the 'int' parameters
@@ -292,6 +293,32 @@
  isn't already in the echelon. If the T-Doll is already in the echelon, their position is swapped.
 -Renamed function 'updateGrid()' to 'updateUI()' in 'UI.java'; this is so it better reflects it's
  use, as it now updates more than just the grid.
+-Implemented method for detecting when T-Dolls are on buffed tiles. This method doesn't differentiate
+ which T-Dolls are on said tiles though. The code is temporarily in the 'test()' function in 'UI.java'.
+-Added new function 'checkTiles()' to 'Utils.java'; this will be used to check if T-Dolls are standing
+ on tiles that can buff their stats. The code implemented above has been copied here.
+-Method for detecting tile buffs has been tweaked so that it differentiates T-Dolls. This currently
+ works with HGs and RFs but should work will all T-Dolls in theory.
+-Added 'ImageButtons' to remove T-Dolls from the echelon
+-Fixed issue with removing T-Dolls; removed T-Dolls were replaced with null T-Dolls but they didn't
+ have their grid positions and 'ImageViews' assigned, meaning that when it came to updating the UI,
+ the 'ImageView' used was null, causing a null pointer error.
+-Added new function 'getHightlight()' to 'Utils.java'; this is to get the highlight colour that
+ will be used for highlighting the tiles for buffs and movement.
+-Added spinner functionality to select the level of the T-Doll and the level of their skill
+-Added new function 'TDollGrowthFactor(int, String, boolean)' to 'Utils.java'; this is going to be
+ used to help calculate the T-Dolls stats after their levels change.
+-Added new function 'levelChange(Doll)' to 'Utils.java'; this is to calculate the changed stats based
+ on the T-Doll's level.
+
+07/06/2020
+-Made copy constructor for 'Doll.java'; this is due to the fact that the 'Doll' objects used in the
+ 'Echelon' class were the original 'Doll' objects and not copies, meaning that their stats were being
+ altered, messing with future calculations.
+
+ #MAKE THE SURE THAT THE UTILS USES THE RAW T-DOLLS AND NOT THE ONES INSIDE THE ECHELON
+ #LEVELCHANGE WORKS, AT LEAST FOR HP, IT JUST NEEDS TO FACTOR IN THE AMOUNT OF LINKS THE DOLL MAY HAVE AT THE GIVEN LEVEL
+ #REWORK ADDDOLL FUNCTION TO MAKE IT WORK WITH THE COPY CONSTRUCTOR IN DOLL.JAVA
 
  #TEST FUNCTION IS CURRENTLY BEING USED TO TEST T-DOLL DETECTION ON TILES THAT BUFF THEM#
 
