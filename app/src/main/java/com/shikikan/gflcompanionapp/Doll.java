@@ -24,7 +24,7 @@ public class Doll {
 
     private ImageView gridPosition_imageview;
 
-    private int[]tilesFormation, tilesBuffs;
+    private int[]tilesFormation, tilesBuffs, receivedTileBuffs;
 
     /**
      * Pass in the data in the form of a JSONObject so the data can be extracted properly.
@@ -64,12 +64,14 @@ public class Doll {
             icon_name_skill_1 = (String) DollData.get("icon_name_skill1");
             tooltip_skill_1 = (String) DollData.get("tooltip_skill1");
             skill = (JSONObject) DollData.get("skill");
+            skillLevel = 1;
             tooltip_skill_2 = (String) DollData.get("tooltip_skill2");
             tooltip_tiles = (String) DollData.get("tooltip_tiles");
             tiles = (JSONObject) DollData.get("tiles");
             gridPosition = 0;
             gridPosition_imageview = null;
             echelonPosition = 0;
+            receivedTileBuffs = new int[]{0, 0, 0, 0, 0, 0, 0};
 
 
             image = "doll_" + DollData.get("id");
@@ -79,7 +81,6 @@ public class Doll {
         catch (JSONException e){
             setNull();
         }
-
     }
 
     Doll(Doll newDoll){
@@ -123,7 +124,8 @@ public class Doll {
         this.tiles = newDoll.getRawTiles();
         this.gridPosition_imageview = newDoll.getGridImageView();
         this.tilesFormation = newDoll.getTilesFormation();
-        this.tilesBuffs = getTilesBuffs();
+        this.tilesBuffs = newDoll.getTilesBuffs();
+        this.receivedTileBuffs = newDoll.getReceivedTileBuffs();
     }
 
     public Doll(){
@@ -162,6 +164,7 @@ public class Doll {
         icon_name_skill_1 = "";
         tooltip_skill_1 = "";
         skill = null;
+        skillLevel = 0;
         tooltip_skill_2 = "";
         tooltip_tiles = "";
         tiles = null;
@@ -169,6 +172,7 @@ public class Doll {
         gridPosition_imageview = null;
         echelonPosition = 0;
         image = "adddoll";
+        receivedTileBuffs = null;
     }
 
     public int getID() {
@@ -363,10 +367,6 @@ public class Doll {
     public int getGridPosition(){
         return gridPosition;
     }
-    
-//    public void setGridImageView(ImageView imageview) {
-//
-//    }
 
     public ImageView getGridImageView() {
         return gridPosition_imageview;
@@ -391,5 +391,14 @@ public class Doll {
 
     public int[]getTilesFormation(){
         return tilesFormation;
+    }
+
+    public void setReceivedTileBuffs(int[] buffs){
+        receivedTileBuffs = buffs;
+        //for(int i = 0; i < buffs.length; i++) receivedTileBuffs[i] += buffs[i];
+    }
+
+    public int[] getReceivedTileBuffs(){
+        return receivedTileBuffs;
     }
 }

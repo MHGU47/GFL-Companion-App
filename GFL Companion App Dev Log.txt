@@ -315,6 +315,27 @@
 -Made copy constructor for 'Doll.java'; this is due to the fact that the 'Doll' objects used in the
  'Echelon' class were the original 'Doll' objects and not copies, meaning that their stats were being
  altered, messing with future calculations.
+-Added new function 'LevelToSpinnerPosition(int, boolean)' to 'Utils.java'; this is to set the spinner
+ on the level that the T-Doll has when they are selected.
+-Added new function 'CalculateTileBuffs(Echelon)' to 'Calculation.java'; this is going to be used to
+ get the tile buffs for each T-Doll in the echelon and calculate their stats with the buffs applied.
+
+08/06/2020
+-Added new method 'ResetBuffs(Echelon)' to 'Calculation.java'; this is to reset the buffs before they
+ reapplied.
+-Tile buffing method implemented. Works with RFHG, needs to be tested with other formations
+
+
+
+TODO LIST ORDER
+-Add skill buffing functionality
+    -Allow this to be reflected on the stats display
+-Add in skill functionality
+-Add in the rest of the T-Dolls
+-Add DPS display
+-Add fairies
+-Other shit...
+-UI tweaks
 
  #MAKE THE SURE THAT THE UTILS USES THE RAW T-DOLLS AND NOT THE ONES INSIDE THE ECHELON
  #LEVELCHANGE WORKS, AT LEAST FOR HP, IT JUST NEEDS TO FACTOR IN THE AMOUNT OF LINKS THE DOLL MAY HAVE AT THE GIVEN LEVEL

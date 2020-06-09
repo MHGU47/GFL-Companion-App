@@ -21,7 +21,6 @@ public class Echelon {
             //space occupied by a null T-Doll, they will have a proper grid position after the swap
             Dolls[i].setGrid(i + 1, imageViews[i]);
         }
-
     }
 
     /**

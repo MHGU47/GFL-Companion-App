@@ -45,7 +45,7 @@ public class Utils {
     }
 
     private float[] TDollGrowthFactor(int level, String factor, boolean basic){
-        if(level > 100){
+        if(level < 100){
             if(basic){
                 switch(factor){
                     case "hp": return new float[] {55, 0.555f};
@@ -141,21 +141,36 @@ public class Utils {
     }
 
     public void levelchange(Doll doll){
-        doll.setHp((int) (Math.ceil((TDollGrowthFactor(doll.getLevel(), "hp", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "hp", true)[1])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getHp() / 100)) * 5);
+        doll.setHp((int) (Math.ceil((TDollGrowthFactor(doll.getLevel(), "hp", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "hp", true)[1])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getHp() / 100)) * Links(doll.getLevel()));
 
-        doll.setFp((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "fp",true)[0] * Scalars(doll.getType(),"fp") * doll.getFp() / 100));
+        doll.setFp((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "fp",true)[0] * Scalars(doll.getType(),"fp") * getDoll(doll.getID()).getFp() / 100));
         doll.setFp((int) (doll.getFp() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "fp", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "fp", false)[0])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getFp() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setAcc((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "acc",true)[0] * Scalars(doll.getType(),"acc") * doll.getAcc() / 100));
+        doll.setAcc((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "acc",true)[0] * Scalars(doll.getType(),"acc") * getDoll(doll.getID()).getAcc() / 100));
         doll.setAcc((int) (doll.getAcc() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "acc", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "acc", false)[0])) * Scalars(doll.getType(), "acc") * getDoll(doll.getID()).getAcc() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setEva((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "eva",true)[0] * Scalars(doll.getType(),"eva") * doll.getEva() / 100));
+        doll.setEva((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "eva",true)[0] * Scalars(doll.getType(),"eva") * getDoll(doll.getID()).getEva() / 100));
         doll.setEva((int) (doll.getEva() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "eva", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "eva", false)[0])) * Scalars(doll.getType(), "eva") * getDoll(doll.getID()).getEva() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setRof((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "rof",true)[0] * Scalars(doll.getType(),"rof") * doll.getRof() / 100));
+        doll.setRof((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "rof",true)[0] * Scalars(doll.getType(),"rof") * getDoll(doll.getID()).getRof() / 100));
         doll.setRof((int) (doll.getRof() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "rof", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "rof", false)[0])) * Scalars(doll.getType(), "rof") * getDoll(doll.getID()).getRof() * doll.getGrowth_rating() / 100 / 100))));
 
         doll.setArmour((int) Math.ceil((TDollGrowthFactor(doll.getLevel(), "armour", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "armour", true)[1])) * Scalars(doll.getType(), "armour") * getDoll(doll.getID()).getArmour() / 100));
+    }
+
+    public int Links(int level){
+        switch(level){
+            case 1: return 1;
+            case 10:
+            case 20: return 2;
+            case 30:
+            case 40:
+            case 50:
+            case 60: return 3;
+            case 70:
+            case 80: return 4;
+            default: return 5;
+        }
     }
 
     public int FairyGrowthFactor_Basic(String factor){
@@ -213,6 +228,44 @@ public class Utils {
             case 7: return R.id.pos_7;
             case 8: return R.id.pos_8;
             default: return R.id.pos_9;
+        }
+    }
+
+    public int LevelToSpinnerPosition(int level, boolean Skill) {
+        if(Skill && level == 10) return 9;
+        switch (level) {
+            case 1:
+                return 0;
+            case 2:
+            case 10:
+                return 1;
+            case 3:
+            case 20:
+                return 2;
+            case 4:
+            case 30:
+                return 3;
+            case 5:
+            case 40:
+                return 4;
+            case 6:
+            case 50:
+                return 5;
+            case 7:
+            case 60:
+                return 6;
+            case 8:
+            case 70:
+                return 7;
+            case 9:
+            case 80:
+                return 8;
+            case 90:
+                return 9;
+            case 100:
+                return 10;
+            default:
+                return 11;
         }
     }
 
@@ -345,7 +398,7 @@ public class Utils {
 
     public int[][] setUpDollTilesFormation(Doll doll){
         int dollPosition;
-        int[] tilePositions, buffs = new int[15];
+        int[] tilePositions, buffs;
         String temp;
         String[] temp2;
         JSONObject effects;
@@ -368,8 +421,9 @@ public class Utils {
 
             effects = (JSONObject) tiles.get("effect");
 
-            buffs[0] = (int) tiles.get("target_type");
             if(doll.getType() == 1){
+                buffs = new int[15];
+                buffs[0] = (int) tiles.get("target_type");
                 buffs[1] = (int) ((JSONArray) effects.get("fp")).get(0);
                 buffs[2] = (int) ((JSONArray) effects.get("fp")).get(1);
 
@@ -392,30 +446,20 @@ public class Utils {
                 buffs[14] = (int) ((JSONArray) effects.get("armor")).get(1);
             }
             else{
+                buffs = new int[8];
+                buffs[0] = (int) tiles.get("target_type");
                 buffs[1] = (int) effects.get("fp");
-                buffs[2] = (int)  effects.get("fp");
 
-                buffs[3] = (int)  effects.get("acc");
-                buffs[4] = (int)  effects.get("acc");
+                buffs[2] = (int)  effects.get("acc");
+                buffs[3] = (int)  effects.get("eva");
 
-                buffs[5] = (int)  effects.get("eva");
-                buffs[6] = (int)  effects.get("eva");
+                buffs[4] = (int)  effects.get("rof");
+                buffs[5] = (int)  effects.get("crit");
 
-                buffs[7] = (int)  effects.get("rof");
-                buffs[8] = (int)  effects.get("rof");
-
-                buffs[9] = (int)  effects.get("crit");
-                buffs[10] = (int)  effects.get("crit");
-
-                buffs[11] = (int)  effects.get("skillcd");
-                buffs[12] = (int)  effects.get("skillcd");
-
-                buffs[13] = (int)  effects.get("armor");
-                buffs[14] = (int)  effects.get("armor");
-
+                buffs[6] = (int)  effects.get("skillcd");
+                buffs[7] = (int)  effects.get("armor");
                 //TODO 04/06/2020: Make this array smaller at some point
             }
-
         }
         catch (JSONException e){
             Log.d("tag","error",e);

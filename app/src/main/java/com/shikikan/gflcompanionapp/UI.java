@@ -38,6 +38,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     private Spinner TDollLevelSelect, SkillLevelSelect;
     private Utils u = new Utils();
     private Echelon e;
+    private Calculation c;
     private int selectedDoll = 0;
 
     @Override
@@ -102,6 +103,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
      */
     private void setUp() {
         u.LoadDollData(this);
+        c = new Calculation(u);
         setImageViews(true);
         Stats = new TextView[11];
         Stats[0] = findViewById(R.id.name_text);
@@ -139,7 +141,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
      * to portrait orientation only.
      * @param portrait Pass in whether the phone is in portrait or not in the form of a boolean
      */
-    private void setImageViews(boolean portrait){
+    private void setImageViews(boolean portrait) {
         ImageView[] imageViews = new ImageView[9];
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -208,79 +210,54 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         }
     }
 
-    private void test(){
+    private void test() {
         int[] tiles;
-        for(Doll doll : e.getAllDolls()){
-            if(doll.getID() != 0){
-                tiles = u.getDollTilesFormation(doll);
-                for(Doll od : e.getAllDolls()){
-                    for (int tile : tiles) {
-                        if (od.getGridPosition() == tile)
-                            if ((od.getType() == doll.getTilesBuffs()[0] || doll.getTilesBuffs()[0] == 0) && od.getID() != 0)
-                                findViewById(u.GridPositionToViewID(od.getGridPosition())).setBackgroundColor(u.getHighlight());
-                    }
-                }
-            }
-        }
+        //Cycle through every T-Doll in the echelon.
+//        for(Doll doll : e.getAllDolls()){
+//            //If they have an ID, meaning they aren't a dummy T-Doll...
+//            if(doll.getID() != 0){
+//                //...get their tile formation.
+//                tiles = u.getDollTilesFormation(doll);
+//                //Cycle through the echelon again, this time to find the other T-Dolls.
+//                for(Doll od : e.getAllDolls()){
+//                    //Cycle through all the tiles obtained from the previous T-Doll.
+//                    for (int tile : tiles) {
+//                        //If one of the other T-Dolls in the echelon is on the currently iterated tile,...
+//                        if (od.getGridPosition() == tile)
+//                            //...they aren't a dummy T-Doll and they can be buffed by the tile...
+//                            if ((od.getType() == doll.getTilesBuffs()[0] || doll.getTilesBuffs()[0] == 0) && od.getID() != 0)
+//                                //...highlight the tile.
+//                                findViewById(u.GridPositionToViewID(od.getGridPosition())).setBackgroundColor(u.getHighlight());
+//                    }
+//                }
+//            }
+//        }
 
-        u.levelchange(e.getDoll(0));
+        //u.levelchange(e.getDoll(selectedDoll - 1));
+        //c.CalculateTileBuffs(e);
+
     }
 
     public void displayStats(View gridImageView) {
         selectedDoll = 0;
+        c.CalculateTileBuffs(e);
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
+                u.levelchange(doll);
                 Stats[0].setText(doll.getName());
                 Stats[1].setText(String.valueOf(doll.getHp()));
-                Stats[2].setText(String.valueOf(doll.getFp()));
-                Stats[3].setText(String.valueOf(doll.getAcc()));
-                Stats[4].setText(String.valueOf(doll.getEva()));
-                Stats[5].setText(String.valueOf(doll.getRof()));
-                Stats[6].setText(String.valueOf(doll.getCrit()));
+                Stats[2].setText(String.valueOf(doll.getFp() + doll.getReceivedTileBuffs()[0]));
+                Stats[3].setText(String.valueOf(doll.getAcc() + doll.getReceivedTileBuffs()[1]));
+                Stats[4].setText(String.valueOf(doll.getEva() + doll.getReceivedTileBuffs()[2]));
+                Stats[5].setText(String.valueOf(doll.getRof() + doll.getReceivedTileBuffs()[3]));
+                Stats[6].setText(String.valueOf(doll.getCrit() + doll.getReceivedTileBuffs()[4]));
                 Stats[7].setText(String.valueOf(doll.getCritdmg()));
                 Stats[8].setText(String.valueOf(doll.getRounds()));
                 Stats[9].setText(String.valueOf(doll.getArmour()));
                 Stats[10].setText(String.valueOf(doll.getAp()));
-                Spinner t = findViewById(R.id.level_select);
-                switch (doll.getLevel()){
-                    case 1:
-                        t.setSelection(0);
-                        break;
-                    case 10:
-                        t.setSelection(1);
-                        break;
-                    case 20:
-                        t.setSelection(2);
-                        break;
-                    case 30:
-                        t.setSelection(3);
-                        break;
-                    case 40:
-                        t.setSelection(4);
-                        break;
-                    case 50:
-                        t.setSelection(5);
-                        break;
-                    case 60:
-                        t.setSelection(6);
-                        break;
-                    case 70:
-                        t.setSelection(7);
-                        break;
-                    case 80:
-                        t.setSelection(8);
-                        break;
-                    case 90:
-                        t.setSelection(9);
-                        break;
-                    case 100:
-                        t.setSelection(10);
-                        break;
-                    case 120:
-                        t.setSelection(11);
-                        break;
-                }
                 selectedDoll = doll.getEchelonPosition();
+                TDollLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getLevel(), false));
+                SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkillLevel(), true));
                 break;
             }
         }
@@ -296,7 +273,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         //Added the selected T-Doll to the echelon
         e.addDoll(u.getDoll(dollID), echelonPosition);
 
-        //Refresh the gird
+        //Refresh the grid and select buttons
         updateUI();
     }
 
@@ -323,11 +300,9 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
                 int[] tiles = u.getDollTilesFormation(doll);
-                for (int ID : tiles) {
-                    if (ID != 0) {
+                for (int ID : tiles)
+                    if (ID != 0)
                         findViewById(u.GridPositionToViewID(ID)).setBackgroundColor(u.getHighlight());
-                    }
-                }
                 break;
             }
         }
@@ -443,13 +418,14 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                 case R.id.level_select:
                     String t = ((Spinner)findViewById(R.id.level_select)).getSelectedItem().toString();
                     e.getDoll(selectedDoll - 1).setLevel(Integer.parseInt(t));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
                 case R.id.skill_level_select:
                     e.getDoll(selectedDoll - 1).setSkillLevel(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
             }
         }
-
     }
 
     @Override
