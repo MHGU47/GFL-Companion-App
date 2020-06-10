@@ -23,7 +23,8 @@ public class DragShadowBuilder extends View.DragShadowBuilder
         for(Doll doll : e.getAllDolls()){
             try{
                 if(doll.getGridImageView() == view) {
-                    pic = ResourcesCompat.getDrawable(res, res.getIdentifier(doll.getImage(), "drawable", context.getPackageName()), null);
+                    int image = (doll.getID() == 0) ? 0 : res.getIdentifier(doll.getImage(), "drawable", context.getPackageName());
+                    pic = ResourcesCompat.getDrawable(res, image, null);
                     break;
                 }
             }

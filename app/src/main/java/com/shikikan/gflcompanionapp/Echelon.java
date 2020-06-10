@@ -33,7 +33,7 @@ public class Echelon {
         boolean swap = false;
         int oldPosition = 0;
         for(Doll doll_ : Dolls){
-            if(doll_ == doll){
+            if(doll_.getID() == doll.getID()){
                 swap = true;
                 oldPosition = doll_.getEchelonPosition();
                 break;

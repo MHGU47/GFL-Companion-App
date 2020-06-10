@@ -325,23 +325,34 @@
  reapplied.
 -Tile buffing method implemented. Works with RFHG, needs to be tested with other formations
 
+09/06/2020
+-Implemented 3x3 selection screen for T-Dolls
+-Added new function 'LoadPage()' to 'SelectionFragment.java'; this is to refresh the page when it
+ needs to show new T-Dolls.
+-Altered function 'addDoll(Doll, int)' in 'Echelon.java'; the method used for checking for duplicate
+ T-Dolls now compares the T-Dolls' IDs instead of directly comparing the objects. This is due to the
+ fact that the duplicate and the original will now be rightfully considered as two separate entities
+ (caused by previous code changes), meaning that that they won't be considered the same object,
+ ultimately not swapping them as intended. The change applied means that they will be swapped based
+ on their IDs being the same.
 
+10/06/2020
+-Currently not using 'onClick' function from 'SelectionFragment.java'; this isn't working for some
+ reason. I'll consider adding it back in at a later date. At this point, each button has it's own
+ listener attached to it.
+-Currently able to cycle through all HGs and display them properly. Due to there being no 'edge scrolling',
+ the app will crash once it reaches the end of the array. Only HGs are available for selection at this
+ point.
 
 TODO LIST ORDER
+-Add in the rest of the T-Dolls
 -Add skill buffing functionality
     -Allow this to be reflected on the stats display
 -Add in skill functionality
--Add in the rest of the T-Dolls
 -Add DPS display
 -Add fairies
 -Other shit...
 -UI tweaks
-
- #MAKE THE SURE THAT THE UTILS USES THE RAW T-DOLLS AND NOT THE ONES INSIDE THE ECHELON
- #LEVELCHANGE WORKS, AT LEAST FOR HP, IT JUST NEEDS TO FACTOR IN THE AMOUNT OF LINKS THE DOLL MAY HAVE AT THE GIVEN LEVEL
- #REWORK ADDDOLL FUNCTION TO MAKE IT WORK WITH THE COPY CONSTRUCTOR IN DOLL.JAVA
-
- #TEST FUNCTION IS CURRENTLY BEING USED TO TEST T-DOLL DETECTION ON TILES THAT BUFF THEM#
 
 
 Grid key for JSON file

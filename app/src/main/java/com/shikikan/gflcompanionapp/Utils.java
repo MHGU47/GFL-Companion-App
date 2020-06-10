@@ -407,9 +407,7 @@ public class Utils {
             dollPosition = (int) tiles.get("self");
             temp = (String) tiles.get("target");
             temp2 = temp.split(",");
-            //tilePositions = new int[temp2.length];
 
-            //test
             tilePositions = new int[temp2.length + 1];
             tilePositions[0] = dollPosition;
 

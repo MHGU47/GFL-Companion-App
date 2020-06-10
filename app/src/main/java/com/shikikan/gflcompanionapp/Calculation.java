@@ -1,15 +1,10 @@
 package com.shikikan.gflcompanionapp;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-
 public class Calculation {
     Utils u;
-    UI ui;
 
     public Calculation(Utils u){
         this.u = u;
-        //this.ui = ui;
     }
     public void CalculateTileBuffs(Echelon e){
         ResetBuffs(e);

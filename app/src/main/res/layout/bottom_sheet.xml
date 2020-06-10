@@ -62,17 +62,191 @@
                 android:icon="@drawable/sg" />
         </com.google.android.material.tabs.TabLayout>
     </androidx.viewpager.widget.ViewPager>-->
-    <HorizontalScrollView
-        android:id="@+id/hg_scroll"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:visibility="visible">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/hg_layout"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/dollSelect_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_226" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_92" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_137" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/smg_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <ImageButton
+                android:id="@+id/dollSelect_4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_122" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_112" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_234" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rf_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/dollSelect_7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/doll_48" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_46" />
+
+            <ImageButton
+                android:id="@+id/dollSelect_9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:padding="10dp"
+                app:srcCompat="@drawable/doll_256" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ar_layout"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/imageButton6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/doll_125" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mg_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/imageButton7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/doll_240" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sg_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/imageButton8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/doll_242" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/nav_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onClick"
+                android:text="@string/previous" />
+
+            <Button
+                android:id="@+id/nav_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/next" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/hg_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="visible">
 
             <ImageButton
@@ -96,20 +270,12 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/doll_137" />
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/smg_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:visibility="gone">
 
         <LinearLayout
             android:id="@+id/smg_layout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:visibility="visible">
 
             <ImageButton
                 android:id="@+id/imageButton4"
@@ -118,14 +284,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/doll_122" />
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/rf_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:visibility="visible">
 
         <LinearLayout
             android:id="@+id/rf_layout"
@@ -148,16 +306,9 @@
                 app:srcCompat="@drawable/doll_46" />
 
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/ar_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/ar_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:visibility="gone">
@@ -169,16 +320,9 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/doll_125" />
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/mg_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/mg_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:visibility="gone">
@@ -190,16 +334,9 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/doll_240" />
         </LinearLayout>
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/sg_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/sg_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:visibility="gone">
@@ -211,6 +348,7 @@
                 android:layout_weight="1"
                 app:srcCompat="@drawable/doll_242" />
         </LinearLayout>
-    </HorizontalScrollView>
+
+    </LinearLayout>-->
 
 </LinearLayout>
