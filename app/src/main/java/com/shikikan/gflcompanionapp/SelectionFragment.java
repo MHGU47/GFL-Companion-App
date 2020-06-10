@@ -265,16 +265,52 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         SGs = new ArrayList<>();
 
         for (Doll doll : dollData) {
-            if (doll.getType() == 1) HGs.add(doll);
-        }//TODO 10/06/2020 Add in the code to allow the population of the lists that contain the
-        //                 other T-Dolls
+//            switch(doll.getType()) {
+//                case 1:
+//                    HGs.add(doll);
+//                    break;
+//                case 2:
+//                    SMGs.add(doll);
+//                    break;
+//                case 3:
+//                    RFs.add(doll);
+//                    break;
+//                case 4:
+//                    ARs.add(doll);
+//                    break;
+//                case 5:
+//                    MGs.add(doll);
+//                    break;
+//                default:
+//                    SGs.add(doll);
+//                    break;
+//            }
+            SGs.add(doll);
+        }
     }
 
     private void LoadPage(){
+        boolean reset = false;
+        for(ImageButton btn : imageButtons) btn.setVisibility(View.GONE);
         for(int i = 0; i < 9; i++){
-            imageButtons[i].setImageResource(getResources().getIdentifier(HGs.get(counter).getImage(), "drawable", context.getPackageName()));
-            dollIndex[i] = HGs.get(counter);
-            counter++;
+            try{
+                if(!reset){
+                    imageButtons[i].setImageResource(getResources().getIdentifier(SGs.get(counter).getImage(), "drawable", context.getPackageName()));
+                    imageButtons[i].setVisibility(View.VISIBLE);
+                    dollIndex[i] = SGs.get(counter);
+                    counter++;
+                }
+            }
+            catch (Exception e){
+                counter = 0;
+                reset = true;
+                if(i == 0) {
+                    reset = false;
+                    i = -1;
+                }
+            }
+
+
             //TODO 10/06/2020 Find a way to allow 'edge scrolling'. Maybe do a check with a try/catch
             //                and then fill the rest of the index with null Doll objects. Then add
             //                code that prevents the user from selecting the null Doll objects.

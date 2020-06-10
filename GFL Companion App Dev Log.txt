@@ -337,12 +337,27 @@
  on their IDs being the same.
 
 10/06/2020
--Currently not using 'onClick' function from 'SelectionFragment.java'; this isn't working for some
+-Currently not using 'onClick' function in 'SelectionFragment.java'; this isn't working for some
  reason. I'll consider adding it back in at a later date. At this point, each button has it's own
  listener attached to it.
 -Currently able to cycle through all HGs and display them properly. Due to there being no 'edge scrolling',
  the app will crash once it reaches the end of the array. Only HGs are available for selection at this
  point.
+-Tweaked buff applying method; buffs are now retrieved individually from the 'Doll' object via
+ a new function 'getTileBuff(String)', which returns a float. The T-Doll's stat is multiplied by
+ the returned float in the 'displayStats(View)' function, rounded up and casted to an 'int'.
+-Tweaked how duplicate T-Dolls are handled; due to the previous change which made it so that T-Dolls
+ added to the echelon were copies of indexed T-Dolls held in the 'Utils' object, the current code still
+ had to be changed. There was an error with T-Dolls being overwritten on the grid, which when fixed by
+ passing the newly added T-Doll through 'checkGrid(Doll, int)' after making a copy, led to another
+ issue where duplicate T-Dolls were being treated as new T-Dolls without actually giving them grid
+ information. This meant that when they were swapped, they didn't have anything to reference when applying
+ an image, crashing the app. This was fixed by overwriting the passed in 'doll' parameter in
+ 'addDoll(Doll, int)' with the already existing T-Doll in the echelon and going from there.
+-Currently able to cycle all the way through HGs, displaying T-Dolls at the end of the list on their
+ own e.g. the last five will be shown on their own instead of being grouped in with the first four.
+ This way the list is always the same throughout.
+
 
 TODO LIST ORDER
 -Add in the rest of the T-Dolls

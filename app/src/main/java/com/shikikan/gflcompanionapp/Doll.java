@@ -380,6 +380,8 @@ public class Doll {
         return echelonPosition;
     }
 
+    //Tiles and Buffs
+
     public void setTiles(int[][] tiles){
         tilesFormation = tiles[0];
         tilesBuffs = tiles[1];
@@ -400,5 +402,17 @@ public class Doll {
 
     public int[] getReceivedTileBuffs(){
         return receivedTileBuffs;
+    }
+
+    public float getTileBuff(String buff){
+        switch(buff){
+            case "fp": return 1 + ((float)receivedTileBuffs[0] / 100);
+            case "acc": return 1 + ((float)receivedTileBuffs[1] / 100);
+            case "eva": return 1 + ((float)receivedTileBuffs[2] / 100);
+            case "rof": return 1 + ((float)receivedTileBuffs[3] / 100);
+            case "crit": return 1 + ((float)receivedTileBuffs[4] / 100);
+            case "skillcd": return 1 + ((float)receivedTileBuffs[5] / 100);
+            default: return 1 + ((float)receivedTileBuffs[6] / 100);
+        }
     }
 }

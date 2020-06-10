@@ -42,6 +42,7 @@ public class Echelon {
 
         if(swap){
             Doll temp = Dolls[echelonPosition - 1];
+            for(Doll existingDoll : Dolls) if(doll.getID() == existingDoll.getID()) doll = existingDoll;
 
             doll.setEchelonPosition(echelonPosition);
             doll.setTiles(u.setUpDollTilesFormation(doll));
@@ -52,8 +53,8 @@ public class Echelon {
             swapGridPosition(temp, Dolls[doll.getEchelonPosition() - 1]);
         }
         else{
-            checkGrid(doll, echelonPosition);
             Doll newDoll = new Doll(doll);
+            checkGrid(newDoll, echelonPosition);
             newDoll.setEchelonPosition(echelonPosition);
 
             newDoll.setTiles(u.setUpDollTilesFormation(newDoll));

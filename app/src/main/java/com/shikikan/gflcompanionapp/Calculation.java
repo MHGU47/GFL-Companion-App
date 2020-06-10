@@ -6,6 +6,7 @@ public class Calculation {
     public Calculation(Utils u){
         this.u = u;
     }
+
     public void CalculateTileBuffs(Echelon e){
         ResetBuffs(e);
         int[] tiles;
@@ -59,6 +60,8 @@ public class Calculation {
                 }
             }
         }
+
+        //ApplyBuffs(e);
     }
 
     private void ResetBuffs(Echelon e){
