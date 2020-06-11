@@ -358,6 +358,11 @@
  own e.g. the last five will be shown on their own instead of being grouped in with the first four.
  This way the list is always the same throughout.
 
+11/06/2020
+-Altered function 'LoadPage()' in 'SelectionFragment.java'; it now takes a boolean parameter that is
+ used alongside new code that allows the user to go back on the selection screen.
+-Currently able to cycle through all T-Dolls, going backwards and forwards in the lists
+
 
 TODO LIST ORDER
 -Add in the rest of the T-Dolls

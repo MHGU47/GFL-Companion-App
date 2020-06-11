@@ -116,12 +116,22 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         v.findViewById(R.id.nav_next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoadPage();
+                LoadPage(false);
             }
         });
 
-        LoadPage();
+        v.findViewById(R.id.nav_previous).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(true);
+            }
+        });
 
+        LoadPage(false);
+
+        //TODO 11/06/2020 Add in code that switches the types of T-Dolls. This will most likely require
+        //                either a new function that controls resetting the layout or altering
+        //                'LoadPage(boolean)' again.
 
         //#TEST CODE#
         //This is used to hardcode in pre-selected T-Dolls to test out displaying T-Dolls once selected
@@ -265,55 +275,97 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         SGs = new ArrayList<>();
 
         for (Doll doll : dollData) {
-//            switch(doll.getType()) {
-//                case 1:
-//                    HGs.add(doll);
-//                    break;
-//                case 2:
-//                    SMGs.add(doll);
-//                    break;
-//                case 3:
-//                    RFs.add(doll);
-//                    break;
-//                case 4:
-//                    ARs.add(doll);
-//                    break;
-//                case 5:
-//                    MGs.add(doll);
-//                    break;
-//                default:
-//                    SGs.add(doll);
-//                    break;
-//            }
-            SGs.add(doll);
+            switch(doll.getType()) {
+                case 1:
+                    HGs.add(doll);
+                    break;
+                case 2:
+                    SMGs.add(doll);
+                    break;
+                case 3:
+                    RFs.add(doll);
+                    break;
+                case 4:
+                    ARs.add(doll);
+                    break;
+                case 5:
+                    MGs.add(doll);
+                    break;
+                default:
+                    SGs.add(doll);
+                    break;
+            }
+            //SGs.add(doll);
         }
     }
 
-    private void LoadPage(){
+    private void LoadPage(boolean goBack){
+
+        //Used to determine whether the user needs to be taken back to the first page
         boolean reset = false;
+
+        //Reset all 'ImageButtons' in the event that they aren't all needed. This stops the user from
+        //being able to interact with them.
         for(ImageButton btn : imageButtons) btn.setVisibility(View.GONE);
+
+        //Determines whether the user wants to go to a previous page or not
+        if (goBack){
+
+            //'counter' will be 9 when the user is on the first page as it will have already been
+            //iterated during the displaying of the 'ImageViews'.
+            if(counter == 9){
+
+                //If the user wants to go to the last page from the first page, set 'counter' to be
+                //the right amount to correctly display the T-Dolls the would appear on the last page.
+                //This is done by subtracting the remainder of the size of the list divided by 9 from
+                //the overall size and setting 'counter' to that value.
+                counter = ARs.size() - (ARs.size() % 9);
+
+                //If the remainder is '0', meaning that 'counter' is the same as the list's size,
+                //subtract 9 form 'counter'.
+                if (counter == ARs.size()) counter = ARs.size() - 9;
+            }
+
+            //If the user is on the last page, subtract the remainder of the size of the list
+            //divided by 9 from the overall size plus 9. The extra 9 is to push 'counter' further back
+            //as the removing a pages worth of T-Dolls will effectively refresh the same page. Pushing
+            //'counter' further back enables the previous' pages T-Dolls to appear.
+            else if(counter == 0) counter = ARs.size() - ((ARs.size() % 9) + 9);
+
+            //If the user is on any other page besides the first or last, subtract 18 from 'counter'
+            else counter -= 18;
+        }
+
         for(int i = 0; i < 9; i++){
+
+            //'Try/Catch' statement used to make sure that T-Dolls from the start and the end of the
+            //list don't end up being displayed on the same page.
             try{
+
+                //If the last page hasn't been reached yet...
                 if(!reset){
-                    imageButtons[i].setImageResource(getResources().getIdentifier(SGs.get(counter).getImage(), "drawable", context.getPackageName()));
+
+                    //Display all the T-Dolls available, make the 'ImageButton' visible, add the
+                    //T-Doll to the selection index and iterate counter.
+                    imageButtons[i].setImageResource(getResources().getIdentifier(ARs.get(counter).getImage(), "drawable", context.getPackageName()));
                     imageButtons[i].setVisibility(View.VISIBLE);
-                    dollIndex[i] = SGs.get(counter);
+                    dollIndex[i] = ARs.get(counter);
                     counter++;
                 }
             }
             catch (Exception e){
+                //When the end of the list is reached and the amount of T-Dolls left to display is
+                //less than 9, reset 'counter' and set 'reset' to true.
                 counter = 0;
                 reset = true;
+
+                //If the exception happens when no buttons have been set, start from the beginning of
+                //the list. This is to prevent blank pages from appearing.
                 if(i == 0) {
                     reset = false;
                     i = -1;
                 }
             }
-
-
-            //TODO 10/06/2020 Find a way to allow 'edge scrolling'. Maybe do a check with a try/catch
-            //                and then fill the rest of the index with null Doll objects. Then add
-            //                code that prevents the user from selecting the null Doll objects.
         }
     }
 
@@ -348,7 +400,7 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
                 selectionListener.onDollSelect(dollIndex[8].getID(), echelonPosition);
                 dismiss();
             case R.id.nav_next:
-                LoadPage();
+                LoadPage(false);
                 break;
         }
     }
