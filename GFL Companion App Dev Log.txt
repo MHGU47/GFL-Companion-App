@@ -368,6 +368,8 @@
  T-Doll types.
 -Currently able to cycle through all T-Dolls. The user can toggle between which T-Doll type they want,
  with the selected type's button disappearing if they are already displayed.
+
+12/06/2020
 -Added new class 'Equipment.java'; this will be used to handle the equipment objects. 'equips.json'
  has been added to the project in order to get the required information, as well as the image files.
 -Added new function 'LoadEquipmentData(context)' to 'Utils.java'; this is to be used to load the
