@@ -26,6 +26,8 @@ public class Doll {
 
     private int[]tilesFormation, tilesBuffs, receivedTileBuffs;
 
+    private Equipment[] equipment;
+
     /**
      * Pass in the data in the form of a JSONObject so the data can be extracted properly.
      * To be used by Utils.LoadDollData(Context)
@@ -72,6 +74,8 @@ public class Doll {
             gridPosition_imageview = null;
             echelonPosition = 0;
             receivedTileBuffs = new int[]{0, 0, 0, 0, 0, 0, 0};
+
+            equipment = new Equipment[3];
 
 
             image = "doll_" + DollData.get("id");
@@ -126,9 +130,10 @@ public class Doll {
         this.tilesFormation = newDoll.getTilesFormation();
         this.tilesBuffs = newDoll.getTilesBuffs();
         this.receivedTileBuffs = newDoll.getReceivedTileBuffs();
+        this.equipment = newDoll.getAllEquipment();
     }
 
-    public Doll(){
+    Doll(){
         setNull();
     }
 
@@ -171,8 +176,9 @@ public class Doll {
         gridPosition = 0;
         gridPosition_imageview = null;
         echelonPosition = 0;
-        image = "adddoll";
+        image = "placeholder";
         receivedTileBuffs = null;
+        equipment = null;
     }
 
     public int getID() {
@@ -378,6 +384,18 @@ public class Doll {
 
     public int getEchelonPosition() {
         return echelonPosition;
+    }
+
+    public void setEquipment(Equipment[] equipment){
+        this.equipment = equipment;
+    }
+
+    public Equipment[] getAllEquipment(){
+        return equipment;
+    }
+
+    public Equipment getEquipment(int index){
+        return equipment[index];
     }
 
     //Tiles and Buffs

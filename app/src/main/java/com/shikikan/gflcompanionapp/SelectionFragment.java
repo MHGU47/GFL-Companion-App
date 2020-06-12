@@ -2,6 +2,7 @@ package com.shikikan.gflcompanionapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +26,11 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
     private Doll[] dollData;
     private Context context;
     private int echelonPosition, counter = 0;
-    private ImageButton[] imageButtons = new ImageButton[9];
+    private ImageButton[] imageButtons = new ImageButton[6], typeSelectButtons = new ImageButton[6];
     private String[] imageButtonIDs;
-    private Doll[] dollIndex = new Doll[9];
-    private List<Doll> HGs, SMGs, RFs, ARs, MGs, SGs;
+    private Doll[] dollIndex = new Doll[6];
+    private List<Doll> HGs, SMGs, RFs, ARs, MGs, SGs, SelectedType;
+    private List<List<Doll>> AllTypes;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +47,16 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         imageButtons[3] = v.findViewById(R.id.dollSelect_4);
         imageButtons[4] = v.findViewById(R.id.dollSelect_5);
         imageButtons[5] = v.findViewById(R.id.dollSelect_6);
-        imageButtons[6] = v.findViewById(R.id.dollSelect_7);
-        imageButtons[7] = v.findViewById(R.id.dollSelect_8);
-        imageButtons[8] = v.findViewById(R.id.dollSelect_9);
+//        imageButtons[6] = v.findViewById(R.id.dollSelect_7);
+//        imageButtons[7] = v.findViewById(R.id.dollSelect_8);
+//        imageButtons[8] = v.findViewById(R.id.dollSelect_9);
+
+        typeSelectButtons[0] = v.findViewById(R.id.HGSelect);
+        typeSelectButtons[1] = v.findViewById(R.id.SMGSelect);
+        typeSelectButtons[2] = v.findViewById(R.id.RFSelect);
+        typeSelectButtons[3] = v.findViewById(R.id.ARSelect);
+        typeSelectButtons[4] = v.findViewById(R.id.MGSelect);
+        typeSelectButtons[5] = v.findViewById(R.id.SGSelect);
 
         imageButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,43 +100,85 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
                 dismiss();
             }
         });
-        imageButtons[6].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectionListener.onDollSelect(dollIndex[6].getID(), echelonPosition);
-                dismiss();
-            }
-        });
-        imageButtons[7].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectionListener.onDollSelect(dollIndex[7].getID(), echelonPosition);
-                dismiss();
-            }
-        });
-        imageButtons[8].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectionListener.onDollSelect(dollIndex[8].getID(), echelonPosition);
-                dismiss();
-            }
-        });
+//        imageButtons[6].setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                selectionListener.onDollSelect(dollIndex[6].getID(), echelonPosition);
+//                dismiss();
+//            }
+//        });
+//        imageButtons[7].setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                selectionListener.onDollSelect(dollIndex[7].getID(), echelonPosition);
+//                dismiss();
+//            }
+//        });
+//        imageButtons[8].setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                selectionListener.onDollSelect(dollIndex[8].getID(), echelonPosition);
+//                dismiss();
+//            }
+//        });
 
         v.findViewById(R.id.nav_next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoadPage(false);
+                LoadPage(false, 0);
             }
         });
 
         v.findViewById(R.id.nav_previous).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoadPage(true);
+                LoadPage(true, 0);
             }
         });
 
-        LoadPage(false);
+        v.findViewById(R.id.HGSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 1);
+            }
+        });
+
+        v.findViewById(R.id.SMGSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 2);
+            }
+        });
+
+        v.findViewById(R.id.RFSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 3);
+            }
+        });
+
+        v.findViewById(R.id.ARSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 4);
+            }
+        });
+
+        v.findViewById(R.id.MGSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 5);
+            }
+        });
+
+        v.findViewById(R.id.SGSelect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoadPage(false, 6);
+            }
+        });
+
+        LoadPage(false, 0);
 
         //TODO 11/06/2020 Add in code that switches the types of T-Dolls. This will most likely require
         //                either a new function that controls resetting the layout or altering
@@ -273,6 +324,8 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         ARs = new ArrayList<>();
         MGs = new ArrayList<>();
         SGs = new ArrayList<>();
+        AllTypes = new ArrayList<>();
+        SelectedType = new ArrayList<>();
 
         for (Doll doll : dollData) {
             switch(doll.getType()) {
@@ -297,9 +350,17 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
             }
             //SGs.add(doll);
         }
+
+        AllTypes.add(HGs);
+        AllTypes.add(SMGs);
+        AllTypes.add(RFs);
+        AllTypes.add(ARs);
+        AllTypes.add(MGs);
+        AllTypes.add(SGs);
+        SelectedType = AllTypes.get(0);
     }
 
-    private void LoadPage(boolean goBack){
+    private void LoadPage(boolean goBack, int type){
 
         //Used to determine whether the user needs to be taken back to the first page
         boolean reset = false;
@@ -307,36 +368,76 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
         //Reset all 'ImageButtons' in the event that they aren't all needed. This stops the user from
         //being able to interact with them.
         for(ImageButton btn : imageButtons) btn.setVisibility(View.GONE);
+        for(ImageButton btn : typeSelectButtons) btn.setVisibility(View.VISIBLE);
+
+        //If the 'type' passed in isn't '0', meaning that the user wishes to change the displayed T-Doll
+        //type, reset the counter and change the list that 'SelectedType' uses.
+        if(type != 0) {
+            SelectedType = AllTypes.get(type - 1);
+            counter = 0;
+        }
+
+        //Go through each list in 'AllTypes'...
+        for(List<Doll> dollType : AllTypes){
+
+            //If the current list in 'dollType' is the same as 'SelectedType'...
+            if(dollType == SelectedType){
+
+                //Get the T-Doll type of the T-Doll within that list and use that to determine which
+                //select button to hide.
+                switch(dollType.get(0).getType()){
+                    case 1:
+                        typeSelectButtons[0].setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        typeSelectButtons[1].setVisibility(View.GONE);
+                        break;
+                    case 3:
+                        typeSelectButtons[2].setVisibility(View.GONE);
+                        break;
+                    case 4:
+                        typeSelectButtons[3].setVisibility(View.GONE);
+                        break;
+                    case 5:
+                        typeSelectButtons[4].setVisibility(View.GONE);
+                        break;
+                    default:
+                        typeSelectButtons[5].setVisibility(View.GONE);
+                        break;
+                }
+            }
+        }
 
         //Determines whether the user wants to go to a previous page or not
         if (goBack){
 
-            //'counter' will be 9 when the user is on the first page as it will have already been
+            //'counter' will be 6 when the user is on the first page as it will have already been
             //iterated during the displaying of the 'ImageViews'.
-            if(counter == 9){
+            if(counter == 6){
 
                 //If the user wants to go to the last page from the first page, set 'counter' to be
                 //the right amount to correctly display the T-Dolls the would appear on the last page.
-                //This is done by subtracting the remainder of the size of the list divided by 9 from
+                //This is done by subtracting the remainder of the size of the list divided by 6 from
                 //the overall size and setting 'counter' to that value.
-                counter = ARs.size() - (ARs.size() % 9);
+                //counter = HGs.size() - (HGs.size() % 6);
+                counter = SelectedType.size() - (SelectedType.size() % 6);
 
                 //If the remainder is '0', meaning that 'counter' is the same as the list's size,
-                //subtract 9 form 'counter'.
-                if (counter == ARs.size()) counter = ARs.size() - 9;
+                //subtract 6 form 'counter'.
+                if (counter == SelectedType.size()) counter = SelectedType.size() - 6;
             }
 
             //If the user is on the last page, subtract the remainder of the size of the list
-            //divided by 9 from the overall size plus 9. The extra 9 is to push 'counter' further back
+            //divided by 6 from the overall size plus 6. The extra 6 is to push 'counter' further back
             //as the removing a pages worth of T-Dolls will effectively refresh the same page. Pushing
             //'counter' further back enables the previous' pages T-Dolls to appear.
-            else if(counter == 0) counter = ARs.size() - ((ARs.size() % 9) + 9);
+            else if(counter == 0) counter = SelectedType.size() - ((SelectedType.size() % 6) + 6);
 
             //If the user is on any other page besides the first or last, subtract 18 from 'counter'
-            else counter -= 18;
+            else counter -= 12;
         }
 
-        for(int i = 0; i < 9; i++){
+        for(int i = 0; i < 6; i++){
 
             //'Try/Catch' statement used to make sure that T-Dolls from the start and the end of the
             //list don't end up being displayed on the same page.
@@ -347,20 +448,20 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
 
                     //Display all the T-Dolls available, make the 'ImageButton' visible, add the
                     //T-Doll to the selection index and iterate counter.
-                    imageButtons[i].setImageResource(getResources().getIdentifier(ARs.get(counter).getImage(), "drawable", context.getPackageName()));
+                    imageButtons[i].setImageResource(getResources().getIdentifier(SelectedType.get(counter).getImage(), "drawable", context.getPackageName()));
                     imageButtons[i].setVisibility(View.VISIBLE);
-                    dollIndex[i] = ARs.get(counter);
+                    dollIndex[i] = SelectedType.get(counter);
                     counter++;
                 }
             }
             catch (Exception e){
                 //When the end of the list is reached and the amount of T-Dolls left to display is
-                //less than 9, reset 'counter' and set 'reset' to true.
+                //less than 6, reset 'counter' and set 'reset' to true.
                 counter = 0;
                 reset = true;
 
-                //If the exception happens when no buttons have been set, start from the beginning of
-                //the list. This is to prevent blank pages from appearing.
+                //If the exception happens when no buttons have been set, start from the beginning
+                //of the list. This is to prevent blank pages from appearing.
                 if(i == 0) {
                     reset = false;
                     i = -1;
@@ -390,17 +491,17 @@ public class SelectionFragment extends BottomSheetDialogFragment implements View
             case R.id.dollSelect_6:
                 selectionListener.onDollSelect(dollIndex[5].getID(), echelonPosition);
                 dismiss();
-            case R.id.dollSelect_7:
-                selectionListener.onDollSelect(dollIndex[6].getID(), echelonPosition);
-                dismiss();
-            case R.id.dollSelect_8:
-                selectionListener.onDollSelect(dollIndex[7].getID(), echelonPosition);
-                dismiss();
-            case R.id.dollSelect_9:
-                selectionListener.onDollSelect(dollIndex[8].getID(), echelonPosition);
-                dismiss();
+//            case R.id.dollSelect_7:
+//                selectionListener.onDollSelect(dollIndex[6].getID(), echelonPosition);
+//                dismiss();
+//            case R.id.dollSelect_8:
+//                selectionListener.onDollSelect(dollIndex[7].getID(), echelonPosition);
+//                dismiss();
+//            case R.id.dollSelect_9:
+//                selectionListener.onDollSelect(dollIndex[8].getID(), echelonPosition);
+//                dismiss();
             case R.id.nav_next:
-                LoadPage(false);
+                LoadPage(false, 0);
                 break;
         }
     }

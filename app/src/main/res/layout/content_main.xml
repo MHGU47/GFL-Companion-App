@@ -117,7 +117,7 @@
             <RelativeLayout
                 android:id="@+id/selected_doll"
                 android:layout_width="150dp"
-                android:layout_height="500dp">
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
                     android:id="@+id/stats"
@@ -493,6 +493,32 @@
                     android:layout_below="@id/stats"
                     android:layout_alignParentBottom="true">
 
+                    <ImageView
+                        android:id="@+id/equipSlot_1"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:onClick="onClick"
+                        app:srcCompat="@drawable/placeholder" />
+
+                    <ImageView
+                        android:id="@+id/equipSlot_2"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_below="@id/equipSlot_1"
+                        android:layout_alignParentStart="true"
+                        android:onClick="onClick"
+                        app:srcCompat="@drawable/placeholder" />
+
+                    <ImageView
+                        android:id="@+id/equipSlot_3"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_below="@id/equipSlot_2"
+                        android:layout_alignParentStart="true"
+                        android:onClick="onClick"
+                        app:srcCompat="@drawable/placeholder" />
                 </RelativeLayout>
 
             </RelativeLayout>
@@ -500,7 +526,7 @@
             <RelativeLayout
                 android:id="@+id/echelon"
                 android:layout_width="wrap_content"
-                android:layout_height="500dp"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@id/selected_doll">
 

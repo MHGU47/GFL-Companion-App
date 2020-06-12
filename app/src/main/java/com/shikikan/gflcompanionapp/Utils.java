@@ -272,7 +272,7 @@ public class Utils {
     public void LoadDollData(Context context) {
         JSONArray DollData;
         try{
-            DollData = new JSONArray(LoadJSON(context));
+            DollData = new JSONArray(LoadJSON(context, "T-Doll"));
             Doll = new Doll[DollData.length()];
             for(int i = 0; i < DollData.length(); i++) Doll[i] = new Doll(DollData.getJSONObject(i));
         }
@@ -281,10 +281,36 @@ public class Utils {
         }
     }
 
-    private String LoadJSON(Context context) {
+    public void LoadEquipmentData(Context context) {
+        JSONArray EquipmentData;
+        try{
+            EquipmentData = new JSONArray(LoadJSON(context, "Equipment"));
+            Doll = new Doll[EquipmentData.length()];
+            for(int i = 0; i < EquipmentData.length(); i++) Doll[i] = new Doll(EquipmentData.getJSONObject(i));
+        }
+        catch (JSONException e){
+            Log.d("tag","error",e);
+        }
+    }
+
+    private String LoadJSON(Context context, String JSONFile) {
         String json;
+        InputStream is;
+
+        switch(JSONFile){
+            case "T-Doll":
+                is = context.getResources().openRawResource(R.raw.dolls);
+                break;
+            //case "Equipment":
+                // = context.getResources().openRawResource(R.raw.equips);
+                //break;
+            default:
+                is = context.getResources().openRawResource(R.raw.equips);
+                break;
+        }
+
         try {
-            InputStream is = context.getResources().openRawResource(R.raw.dolls);
+
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -454,7 +480,6 @@ public class Utils {
 
                 buffs[6] = (int)  effects.get("skillcd");
                 buffs[7] = (int)  effects.get("armor");
-                //TODO 04/06/2020: Make this array smaller at some point
             }
         }
         catch (JSONException e){

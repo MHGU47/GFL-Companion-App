@@ -64,9 +64,71 @@
     </androidx.viewpager.widget.ViewPager>-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/switch_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/HGSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/hg"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/SMGSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/smg" />
+
+            <ImageButton
+                android:id="@+id/RFSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/rf" />
+
+            <ImageButton
+                android:id="@+id/ARSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ar" />
+
+            <ImageButton
+                android:id="@+id/MGSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/mg" />
+
+            <ImageButton
+                android:id="@+id/SGSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/sg" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/hg_layout"
@@ -139,7 +201,8 @@
         <LinearLayout
             android:id="@+id/rf_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:visibility="gone">
 
             <ImageButton
                 android:id="@+id/dollSelect_7"
@@ -149,6 +212,7 @@
                 android:onClick="onClick"
                 android:padding="10dp"
                 android:scaleType="center"
+                android:visibility="gone"
                 app:srcCompat="@drawable/doll_48" />
 
             <ImageButton
@@ -158,6 +222,7 @@
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/doll_46" />
 
             <ImageButton
@@ -167,50 +232,9 @@
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/doll_256" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ar_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <ImageButton
-                android:id="@+id/imageButton6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/doll_125" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/mg_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <ImageButton
-                android:id="@+id/imageButton7"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/doll_240" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/sg_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <ImageButton
-                android:id="@+id/imageButton8"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/doll_242" />
         </LinearLayout>
 
         <LinearLayout

@@ -102,21 +102,31 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
      * Set Up method. Pretty self explanatory really
      */
     private void setUp() {
+        u.LoadEquipmentData(this);
         u.LoadDollData(this);
         c = new Calculation(u);
+
         setImageViews(true);
-        Stats = new TextView[11];
-        Stats[0] = findViewById(R.id.name_text);
-        Stats[1] = findViewById(R.id.hp_text);
-        Stats[2] = findViewById(R.id.fp_text);
-        Stats[3] = findViewById(R.id.acc_text);
-        Stats[4] = findViewById(R.id.eva_text);
-        Stats[5] = findViewById(R.id.rof_text);
-        Stats[6] = findViewById(R.id.crit_text);
-        Stats[7] = findViewById(R.id.critDmg_text);
-        Stats[8] = findViewById(R.id.rounds_text);
-        Stats[9] = findViewById(R.id.armour_text);
-        Stats[10] = findViewById(R.id.ap_text);
+
+//        Stats = new TextView[11];
+//        Stats[0] = findViewById(R.id.name_text);
+//        Stats[1] = findViewById(R.id.hp_text);
+//        Stats[2] = findViewById(R.id.fp_text);
+//        Stats[3] = findViewById(R.id.acc_text);
+//        Stats[4] = findViewById(R.id.eva_text);
+//        Stats[5] = findViewById(R.id.rof_text);
+//        Stats[6] = findViewById(R.id.crit_text);
+//        Stats[7] = findViewById(R.id.critDmg_text);
+//        Stats[8] = findViewById(R.id.rounds_text);
+//        Stats[9] = findViewById(R.id.armour_text);
+//        Stats[10] = findViewById(R.id.ap_text);
+
+        Stats = new TextView[]{findViewById(R.id.name_text), findViewById(R.id.hp_text),
+                               findViewById(R.id.fp_text), findViewById(R.id.acc_text),
+                               findViewById(R.id.eva_text), findViewById(R.id.rof_text),
+                               findViewById(R.id.crit_text), findViewById(R.id.critDmg_text),
+                               findViewById(R.id.rounds_text), findViewById(R.id.armour_text),
+                               findViewById(R.id.ap_text)};
 
         TDollLevelSelect = findViewById(R.id.level_select);
         SkillLevelSelect = findViewById(R.id.skill_level_select);
@@ -285,13 +295,13 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         }
 
         for (int i = 0; i < e.getAllDolls().length; i++) {
-            if (e.getDoll(i).getID() != 0) {
-                e.getDoll(i).getGridImageView().setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
-            }
+            e.getDoll(i).getGridImageView().setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
         }
 
         for (int i = 0; i < e.getAllDolls().length; i++){
-            selectButtons[i].setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
+            if(e.getDoll(i).getID() != 0){
+                selectButtons[i].setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
+            }
         }
     }
 
