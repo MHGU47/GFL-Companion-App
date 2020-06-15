@@ -131,13 +131,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/hg_layout"
+            android:id="@+id/top_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible">
 
             <ImageButton
-                android:id="@+id/dollSelect_1"
+                android:id="@+id/select_1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -146,7 +146,7 @@
                 app:srcCompat="@drawable/doll_226" />
 
             <ImageButton
-                android:id="@+id/dollSelect_2"
+                android:id="@+id/select_2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -155,7 +155,7 @@
                 app:srcCompat="@drawable/doll_92" />
 
             <ImageButton
-                android:id="@+id/dollSelect_3"
+                android:id="@+id/select_3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -165,13 +165,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/smg_layout"
+            android:id="@+id/bottom_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible">
 
             <ImageButton
-                android:id="@+id/dollSelect_4"
+                android:id="@+id/select_4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -180,7 +180,7 @@
                 app:srcCompat="@drawable/doll_122" />
 
             <ImageButton
-                android:id="@+id/dollSelect_5"
+                android:id="@+id/select_5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -189,7 +189,7 @@
                 app:srcCompat="@drawable/doll_112" />
 
             <ImageButton
-                android:id="@+id/dollSelect_6"
+                android:id="@+id/select_6"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -199,7 +199,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/rf_layout"
+            android:id="@+id/extra_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:visibility="gone">

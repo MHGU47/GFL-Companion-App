@@ -67,6 +67,7 @@ public class Equipment {
         this.en_released = equipment.getEn_Released();
         this.name = equipment.getName();
         this.tooltip = equipment.getTooltip();
+        this.image = equipment.getImage();
     }
 
     Equipment(){

@@ -75,7 +75,7 @@ public class Doll {
             echelonPosition = 0;
             receivedTileBuffs = new int[]{0, 0, 0, 0, 0, 0, 0};
 
-            equipment = new Equipment[3];
+            equipment = new Equipment[]{new Equipment(), new Equipment(), new Equipment()};
 
 
             image = "doll_" + DollData.get("id");
@@ -386,8 +386,19 @@ public class Doll {
         return echelonPosition;
     }
 
-    public void setEquipment(Equipment[] equipment){
-        this.equipment = equipment;
+    public void setEquipment(Equipment equip, int slot){
+//        switch(slot){
+//            case 1:
+//                equipment[0] = equip;
+//                break;
+//            case 2:
+//                equipment[1] = equip;
+//                break;
+//            case 3:
+//                equipment[2] = equip;
+//                break;
+//        }
+        equipment[slot - 1] = equip;
     }
 
     public Equipment[] getAllEquipment(){

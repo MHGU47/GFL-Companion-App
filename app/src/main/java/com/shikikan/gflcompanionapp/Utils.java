@@ -19,7 +19,8 @@ import java.util.Map;
 public class Utils {
     private int highlight = Color.argb(25, 0, 255, 255);
     float[] FAIRY_RARITY_SCALARS = {0.4f, 0.5f, 0.6f, 0.8f, 1};
-    private Doll[] Doll;
+    private Doll[] Dolls;
+    private Equipment[] Equipment;
     private Map <Integer,Integer> positions = new HashMap<>();
 
     public Utils(){
@@ -273,8 +274,8 @@ public class Utils {
         JSONArray DollData;
         try{
             DollData = new JSONArray(LoadJSON(context, "T-Doll"));
-            Doll = new Doll[DollData.length()];
-            for(int i = 0; i < DollData.length(); i++) Doll[i] = new Doll(DollData.getJSONObject(i));
+            Dolls = new Doll[DollData.length()];
+            for(int i = 0; i < DollData.length(); i++) Dolls[i] = new Doll(DollData.getJSONObject(i));
         }
         catch (JSONException e){
             Log.d("tag","error",e);
@@ -285,8 +286,8 @@ public class Utils {
         JSONArray EquipmentData;
         try{
             EquipmentData = new JSONArray(LoadJSON(context, "Equipment"));
-            Doll = new Doll[EquipmentData.length()];
-            for(int i = 0; i < EquipmentData.length(); i++) Doll[i] = new Doll(EquipmentData.getJSONObject(i));
+            Equipment = new Equipment[EquipmentData.length()];
+            for(int i = 0; i < EquipmentData.length(); i++) Equipment[i] = new Equipment(EquipmentData.getJSONObject(i));
         }
         catch (JSONException e){
             Log.d("tag","error",e);
@@ -325,11 +326,122 @@ public class Utils {
     }
 
     public Doll getDoll(int dollID){
-        return Doll[dollID-1];
+        return Dolls[dollID-1];
     }
 
     public Doll[] getAllDolls() {
-        return Doll;
+        return Dolls;
+    }
+
+    public Equipment getEquipment(int equipmentID){
+        return Equipment[equipmentID-1];
+    }
+
+    public Equipment[] getAllEquipment() {
+        return Equipment;
+    }
+
+    public int EquipmentSlot(int type){
+        switch(type) {
+            case 1://Crit Scope
+            case 2://Holo Sight
+            case 3://Red Dot Sight
+            case 4://Night Vision
+            case 13://Suppressor
+            case 20://AK-47/Type 56-1 EX Scope
+            case 21://AK-47/Type 56-1 EX Scope
+            case 22://AK-47/Type 56-1 EX Scope
+            case 26://9A-91 EX Scope
+            case 29://ST AR-15 Mod Equip
+            case 32://Type 64 Mod Equip
+            case 33://FN49 Mod Equip
+            case 34://Kar98K EX Scope
+            case 35://HK416 EX Scope
+            case 38://Mosin-Nagant Mod Scope
+            case 39://M1918 Mod Scope
+            case 40://M1895 Mod Silencer
+            case 41://MP-446 Mod Equip
+            case 43://Clear EX Equip
+            case 44://Fail EX Equip
+            case 45://FAMAS EX Scope
+            case 46://SAA Mod Equip
+            case 47://Bren Mod Equip
+            case 48://G3 Mod Equip
+            case 49://UMP45 Mod Equip
+            case 50://M4 SOPMOD II Mod Equip
+            case 52://Sten MKII Mod Equip
+            case 53://M14 Mod Equip
+            case 54://G36 Mod Scope
+            case 55://LWMMG Mod Scope
+            case 56://MG4 EX Scope
+            case 57://Stechkin EX Equip
+            case 60://Micro Uzi Mod Scope
+            case 61://Jill EX Equip
+            case 64://Jill EX Equip
+            case 65://Jill EX Equip
+            case 75://MP5 Mod Scope
+            case 76://UMP9 Mod Scope
+            case 77://PPK EX Suppressor
+            case 78://SIG-510 EX Equip
+            case 80://BM29 EX Equip
+            case 81://M3 EX Suppressor
+            case 82://FG42 EX Scope
+            case 83://Lee Enfield EX Scope
+            case 84://Type 95/97 EX Scope
+            case 85://Ingram EX Equip
+            case 87://M9 EX Equip
+            case 89://RFB EX Equip
+            case 90://Type 100 EX Equip
+            case 91://Beretta Model 38 Mod Scope
+                return 1;
+            case 5://AP Rounds
+            case 6://HP Rounds
+            case 7://Slug
+            case 8://HV Ammo
+            case 9://Buckshot
+            case 14://Ammo Box
+            case 16://Springfield EX AP
+            case 17://ST AR-15 EX Rounds
+            case 30://M1911 Mod Equip
+            case 36://MG3 EX Ammo Box
+            case 58://AS Val Mod Rounds
+            case 59://StG44 Mod Rounds
+            case 62://Jill EX Equip
+            case 63://Jill EX Equip
+            case 66://Jill EX Equip
+            case 72://Dorothy EX Equip
+            case 79://KS-23 EX Rounds
+                return 2;
+            case 10://Exo
+            case 11://Armour Plate
+            case 12://High Evasion Exo
+            case 15://Cape
+            case 18://M1918 EX Chip
+            case 19://MP5 EX Exo
+            case 23://Mosin-Nagant EX Chip
+            case 24://M16A1 EX Armour
+            case 25://UMP EX Exo
+            case 27://Ameli EX Chip
+            case 28://M4A1 Mod Equip
+            case 31://IDW Mod Equip
+            case 37://PTRD EX Cape
+            case 42://SV-98 Mod Cape
+            case 51://G41 EX Equip
+            case 67://Jill EX Equip
+            case 68://Jill EX Equip
+            case 69://Dana EX Equip
+            case 70://Stella EX Equip
+            case 71://Sei EX Equip
+            case 73://Dana EX Equip
+            case 74://HK416 Mod Equip
+            case 86://Tar-21 EX Equip
+            case 88://RPD EX Equip
+            case 92://Stechkin Mod Equip
+                return 3;
+            default:
+
+                return 0;
+        }
     }
 
 //    public int[][] getDollTilesFormation(Doll doll){

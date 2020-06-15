@@ -376,13 +376,29 @@
  equipment data.
 -Altered function 'LoadJSON(context)' in 'Utils.java'; it now takes a 'String' as a parameter as well.
  This is used to determine whether what JSON file to load data from.
+-Altered function 'SetUp(Doll[], Context, int)' in 'SelectionFragment.java'; this is now called
+ 'setUp_DollSelect' as a new function called 'setUp_EquipmentSelect' has been added.
+-Added new function 'setUp_EquipmentSelect(Equipment[], Context)' to 'SelectionFragment.java';
+ this is to properly set things up when the user wants to select the equipment for a T-Doll.
+-Added ImageViews for equipment selection
+-Started adding cases for all equipment in 'setUp_EquipmentSelect(Equipment[], Context)'
+
+15/06/2020
+-Finished adding cases in 'setUp_EquipmentSelect(Equipment[], Context, int)'
+-Altered function 'LoadPage(boolean, int)' in 'SelectionFragment.java'; it now takes another boolean.
+ This is used to determine how to display the page, whether it's for T-Doll selection or equipment.
+-Added new function 'onEquipmentSelect(int)' to 'SelectionFragment.java'; this is an interface
+ function to pass information to 'UI.java'.
+-Added new function 'EquipmentSlot(int)' to 'Utils.java'; this will be used to determine which slot
+ to assign the given equipment.
 
 
 
 #LEAVE UI THINGS FOR NOW UNLESS NECESSARY
 
-#CURRENTLY DOING: Equipment - Adding in the framework (Alter 'LoadPage(boolean, int)' to allow it to
-                              work with displaying equipment)
+#CURRENTLY DOING: Equipment - Adding in the framework (Testing out selection. Currently images don't
+                              show and the image names don't line up properly, as well as menu
+                              navigation buttons not showing up)
 
 
 TODO LIST ORDER

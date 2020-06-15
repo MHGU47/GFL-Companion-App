@@ -184,7 +184,13 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     }
 
     @Override
+    public void onEquipmentSelect(int equipID, int selectedDoll) {
+        e.getDoll(selectedDoll - 1).setEquipment(u.getEquipment(equipID), u.EquipmentSlot(u.getEquipment(equipID).getID()));
+    }
+
+    @Override
     public void onClick(View v) {
+        SelectionFragment sf;
         switch (v.getId()){
             case R.id.button:
                 //Update();
@@ -195,8 +201,8 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.doll_3:
             case R.id.doll_4:
             case R.id.doll_5:
-                SelectionFragment sf = new SelectionFragment();
-                sf.setUp(u.getAllDolls(), UI.this, u.IDtoInt(v));
+                sf = new SelectionFragment();
+                sf.setUp_DollSelect(u.getAllDolls(), UI.this, u.IDtoInt(v));
                 sf.show(getSupportFragmentManager(), "test");
                 break;
             case R.id.removeDoll_1:
@@ -216,6 +222,13 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.pos_9:
                 displayStats(v);
                 displayDollGrid(v);
+                break;
+            case R.id.equipSlot_1:
+            case R.id.equipSlot_2:
+            case R.id.equipSlot_3:
+                sf = new SelectionFragment();
+                sf.setUp_EquipmentSelect(u.getAllEquipment(), UI.this, selectedDoll);
+                sf.show(getSupportFragmentManager(), "test");
                 break;
         }
     }
