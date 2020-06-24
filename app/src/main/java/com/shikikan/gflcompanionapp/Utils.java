@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
-import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,8 +12,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Utils {
     private int highlight = Color.argb(25, 0, 255, 255);
@@ -22,6 +24,8 @@ public class Utils {
     private Doll[] Dolls;
     private Equipment[] Equipment;
     private Map <Integer,Integer> positions = new HashMap<>();
+    private Map<Integer, int[]> SPEQ = new HashMap<Integer, int[]>();
+    private int[] SPEQTDolls;
 
     public Utils(){
         positions.put(32, 1);
@@ -43,6 +47,162 @@ public class Utils {
         positions.put(7, 12);
         positions.put(8, 13);
         positions.put(9, 14);
+
+        SPEQ.put(3, new int[]{87});//M9 - Slot 1
+        SPEQ.put(7, new int[]{57});//Stechkin - Slot 1
+        SPEQ.put(10, new int[]{77});//PPK - Slot 1
+        SPEQ.put(17, new int[]{81});//M3 - Slot 3
+        SPEQ.put(18, new int[]{84});//Ingram - Slot 3
+        SPEQ.put(26, new int[]{19});//MP5 - Slot 1
+        SPEQ.put(35, new int[]{16});//Springfield - Slot 1
+        SPEQ.put(38, new int[]{23});//Mosin-Nagant - Slot 3
+        SPEQ.put(41, new int[]{37});//PTRD - Slot 3
+        SPEQ.put(44, new int[]{34});//Kar98K - Slot 2
+        SPEQ.put(48, new int[]{83});//Lee Enfield - Slot 2
+        SPEQ.put(50, new int[]{80});//BM59 - Slot 2
+        SPEQ.put(52, new int[]{24});//M16 - Slot 3
+        SPEQ.put(55, new int[]{17});//ST AR-15 - Slot 2
+        SPEQ.put(56, new int[]{20, 21, 22});//AK-47 - Slot 1
+        SPEQ.put(60, new int[]{51});//G41 - Slot 3
+        SPEQ.put(63, new int[]{63});//416 - Slot 1
+        SPEQ.put(64, new int[]{20, 21, 22});//Type56-1 - Slot 1
+        SPEQ.put(66, new int[]{45});//FAMAS - Slot 1
+        SPEQ.put(69, new int[]{86});//TAR21 - Slot 3
+        SPEQ.put(71, new int[]{78});//SIG510 - Slot 1
+        SPEQ.put(72, new int[]{18});//M1918 - Slot 3
+        SPEQ.put(79, new int[]{88});//RPD - Slot 3
+        SPEQ.put(83, new int[]{36});//MG3
+        SPEQ.put(96, new int[]{25});//UMP9 - Slot 1
+        SPEQ.put(97, new int[]{25});//UMP40 - Slot 1
+        SPEQ.put(98, new int[]{25});//UMP45 - Slot 1
+        SPEQ.put(105, new int[]{82});//FG42 - Slot 2
+        SPEQ.put(113, new int[]{26});//9A-91 - Slot 1
+        SPEQ.put(120, new int[]{56});//MG4 - Slot 2
+        SPEQ.put(124, new int[]{84});//Type95 - Slot 1
+        SPEQ.put(125, new int[]{84});//Type97 - Slot 1
+        SPEQ.put(133, new int[]{5});//6P62 - Slot 2
+        SPEQ.put(153, new int[]{79});//KS23 - Slot 2
+        SPEQ.put(167, new int[]{89});//RFB - Slot 1
+        SPEQ.put(178, new int[]{5});//Contender - Slot 2
+        SPEQ.put(180, new int[]{27});//Ameli - Slot 3
+        SPEQ.put(208, new int[]{5});//C-MS - Slot 2
+        SPEQ.put(221, new int[]{90});//Type 100 - Slot 3
+        SPEQ.put(249, new int[]{43});//El CLEAR - Slot 1
+        SPEQ.put(250, new int[]{44});//El FAIL - Slot 1
+        SPEQ.put(251, new int[]{46});//SAA Mod 3 - Slot 1
+        SPEQ.put(252, new int[]{30});//M1911 Mod 3 - Slot 2
+        SPEQ.put(253, new int[]{40});//M1895 Mod 3 - Slot 1
+        SPEQ.put(254, new int[]{52});//STEN Mod 3 - Slot 3
+        SPEQ.put(255, new int[]{53});//M14 - Slot 2
+        SPEQ.put(256, new int[]{38, 23});//Mosin-Nagant Mod 3 - Slot 2, Slot 3
+        SPEQ.put(257, new int[]{41});//SV-98 Mod 3 - Slot 3
+        SPEQ.put(258, new int[]{33});//FN-49 Mod 3 - Slot 2
+        SPEQ.put(259, new int[]{28});//M4A1 Mod 3 - Slot 3
+        SPEQ.put(260, new int[]{92, 24});//SOPMOD II Mod 3 - Slot 1
+        SPEQ.put(261, new int[]{29, 17});//ST AR-15 - Slot 1, Slot 2
+        SPEQ.put(262, new int[]{48});//G3 Mod 3 - Slot 1
+        SPEQ.put(263, new int[]{54});//G36 Mod 3 - Slot 1
+        SPEQ.put(264, new int[]{39, 18});//M1918 Mod 3 - Slot 2, Slot 3
+        SPEQ.put(265, new int[]{55});//LWMMG Mod 3 - Slot 2
+        SPEQ.put(266, new int[]{47});//Bren Mod 3 - Slot 2
+        SPEQ.put(267, new int[]{41});//MP446 Mod 3 - Slot 1
+        SPEQ.put(268, new int[]{31});//IDW Mod 3 - Slot 1
+        SPEQ.put(269, new int[]{32});//Type64 Mod 3 - Slot 3
+        SPEQ.put(270, new int[]{25, 49});//UMP45 Mod 3 - Slot 1, Slot 3
+        SPEQ.put(289, new int[]{58});//AS Val Mod 3 - Slot 2
+        SPEQ.put(290, new int[]{59});//StG44 Mod 2 - Slot 2
+        SPEQ.put(291, new int[]{60});//Micro Uzi Mod 3 - Slot 3
+        SPEQ.put(292, new int[]{69});//Dana - Slot 1
+        SPEQ.put(293, new int[]{73});//Alma - Slot 3
+        SPEQ.put(294, new int[]{70});//Stella - Slot 3
+        SPEQ.put(295, new int[]{71});//Sei - Slot 3
+        SPEQ.put(296, new int[]{61, 62, 63, 64, 65, 66, 67, 68});//Jill - All Slots
+        SPEQ.put(297, new int[]{72});//Dorothy - Slot 2
+        SPEQ.put(303, new int[]{35, 74});//416 Mod 3 - Slot 1, Slot 3
+        SPEQ.put(304, new int[]{35, 75});//MP5 Mod 3 - Slot 1, Slot 3
+        SPEQ.put(305, new int[]{25, 76});//UMP9 Mod 3 - Slot 1, Slot 3
+        SPEQ.put(329, new int[]{91});//MAB3 Mod 3 - Slot 3
+        SPEQ.put(330, new int[]{57, 92});//Stechkin Mod 3 - Slot 1, Slot 3
+
+
+
+
+
+
+
+        SPEQTDolls = new int[] {
+                3, //M9
+                7, //Stechkin
+                10, //PPK
+                17, //M3
+                18, //Ingram
+                26, //MP5
+                35, //Springfield
+                38, //Mosin-Nagant
+                41, //PTRD
+                44, //Kar98k
+                48, //Lee Enfield
+                50, //BM59
+                56, //AK-47
+                60, //G41
+                63, //416
+                64, //Type56-1
+                66, //FAMAS
+                69, //TAR-21
+                71, //SIG510
+                72, //M1918
+                79, //RPD
+                83, //MG3
+                96, //UMP9
+                97, //UMP40
+                98, //UMP45
+                105, //FG42
+                113, //9A-91
+                120, //MG4
+                124, //Type95
+                125, //Type97
+                133, //6P62
+                153, //KS23
+                167, //RFB
+                178, //Contender
+                180, //Ameli
+                208, //C-MS
+                221, //Type100
+                249, //CLEAR
+                250, //FAIL
+                251, //SAA Mod 3
+                252, //M1911 Mod 3
+                253, //M1895 Mod 3
+                254, //STEN Mod 3
+                255, //M14 Mod 3
+                256, //Mosin-Nagant Mod 3
+                257, //SV-98 Mod 3
+                258, //FN-49 Mod 3
+                259, //M4A1 Mod 3
+                262, //G3 Mod 3
+                263, //G36 Mod 3
+                264, //M1918
+                265, //LWMMG Mod 3
+                266, //Bren Mod 3
+                267, //MP446 Mod 3
+                268, //IDW Mod 3
+                269, //Type64 Mod 3
+                270, //UMP45 Mod 3
+                289, //AS Val Mod 3
+                290, //StG44 Mod 3
+                291, //Micro Uzi Mod 3
+                292, //Dana
+                293, //Alma
+                294, //Stella
+                295, //Sei
+                296, //Jill
+                297, //Dorothy
+                303, //416 Mod 3
+                304, //MP5 Mod 3
+                305, //UMP9 Mod 3
+                329, //mab38mod
+                330,//StechkinMod
+        };
     }
 
     private float[] TDollGrowthFactor(int level, String factor, boolean basic){
@@ -141,22 +301,28 @@ public class Utils {
         }
     }
 
-    public void levelchange(Doll doll){
-        doll.setHp((int) (Math.ceil((TDollGrowthFactor(doll.getLevel(), "hp", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "hp", true)[1])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getHp() / 100)) * Links(doll.getLevel()));
+    public void levelChange(Echelon e){
+        for(Doll doll : e.getAllDolls()){
+            if(doll.getID() != 0){
+                doll.setHp((int) (Math.ceil((TDollGrowthFactor(doll.getLevel(), "hp", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "hp", true)[1])) * Scalars(doll.getType(), "hp") * getDoll(doll.getID()).getHp() / 100)) * Links(doll.getLevel()));
 
-        doll.setFp((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "fp",true)[0] * Scalars(doll.getType(),"fp") * getDoll(doll.getID()).getFp() / 100));
-        doll.setFp((int) (doll.getFp() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "fp", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "fp", false)[0])) * Scalars(doll.getType(), "fp") * getDoll(doll.getID()).getFp() * doll.getGrowth_rating() / 100 / 100))));
+                doll.setFp((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "fp",true)[0] * Scalars(doll.getType(),"fp") * getDoll(doll.getID()).getFp() / 100));
+                doll.setFp((int) (doll.getFp() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "fp", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "fp", false)[0])) * Scalars(doll.getType(), "fp") * getDoll(doll.getID()).getFp() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setAcc((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "acc",true)[0] * Scalars(doll.getType(),"acc") * getDoll(doll.getID()).getAcc() / 100));
-        doll.setAcc((int) (doll.getAcc() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "acc", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "acc", false)[0])) * Scalars(doll.getType(), "acc") * getDoll(doll.getID()).getAcc() * doll.getGrowth_rating() / 100 / 100))));
+                doll.setAcc((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "acc",true)[0] * Scalars(doll.getType(),"acc") * getDoll(doll.getID()).getAcc() / 100));
+                doll.setAcc((int) (doll.getAcc() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "acc", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "acc", false)[0])) * Scalars(doll.getType(), "acc") * getDoll(doll.getID()).getAcc() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setEva((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "eva",true)[0] * Scalars(doll.getType(),"eva") * getDoll(doll.getID()).getEva() / 100));
-        doll.setEva((int) (doll.getEva() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "eva", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "eva", false)[0])) * Scalars(doll.getType(), "eva") * getDoll(doll.getID()).getEva() * doll.getGrowth_rating() / 100 / 100))));
+                doll.setEva((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "eva",true)[0] * Scalars(doll.getType(),"eva") * getDoll(doll.getID()).getEva() / 100));
+                doll.setEva((int) (doll.getEva() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "eva", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "eva", false)[0])) * Scalars(doll.getType(), "eva") * getDoll(doll.getID()).getEva() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setRof((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "rof",true)[0] * Scalars(doll.getType(),"rof") * getDoll(doll.getID()).getRof() / 100));
-        doll.setRof((int) (doll.getRof() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "rof", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "rof", false)[0])) * Scalars(doll.getType(), "rof") * getDoll(doll.getID()).getRof() * doll.getGrowth_rating() / 100 / 100))));
+                doll.setRof((int) Math.ceil(TDollGrowthFactor(doll.getLevel(), "rof",true)[0] * Scalars(doll.getType(),"rof") * getDoll(doll.getID()).getRof() / 100));
+                doll.setRof((int) (doll.getRof() + (Math.ceil((TDollGrowthFactor(doll.getLevel(), "rof", false)[1] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "rof", false)[0])) * Scalars(doll.getType(), "rof") * getDoll(doll.getID()).getRof() * doll.getGrowth_rating() / 100 / 100))));
 
-        doll.setArmour((int) Math.ceil((TDollGrowthFactor(doll.getLevel(), "armour", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "armour", true)[1])) * Scalars(doll.getType(), "armour") * getDoll(doll.getID()).getArmour() / 100));
+                doll.setArmour((int) Math.ceil((TDollGrowthFactor(doll.getLevel(), "armour", true)[0] + ((doll.getLevel() - 1) * TDollGrowthFactor(doll.getLevel(), "armour", true)[1])) * Scalars(doll.getType(), "armour") * getDoll(doll.getID()).getArmour() / 100));
+
+                doll.removeEquipment(0);
+            }
+        }
     }
 
     public int Links(int level){
@@ -198,13 +364,16 @@ public class Utils {
         switch (view.getId()){
             case R.id.doll_1:
             case R.id.pos_1:
-            case R.id.removeDoll_1: return 1;
+            case R.id.removeDoll_1:
+            case R.id.equipSlot_1: return 1;
             case R.id.doll_2:
             case R.id.pos_2:
-            case R.id.removeDoll_2: return 2;
+            case R.id.removeDoll_2:
+            case R.id.equipSlot_2: return 2;
             case R.id.doll_3:
             case R.id.pos_3:
-            case R.id.removeDoll_3: return 3;
+            case R.id.removeDoll_3:
+            case R.id.equipSlot_3: return 3;
             case R.id.doll_4:
             case R.id.pos_4:
             case R.id.removeDoll_4: return 4;
@@ -232,8 +401,8 @@ public class Utils {
         }
     }
 
-    public int LevelToSpinnerPosition(int level, boolean Skill) {
-        if(Skill && level == 10) return 9;
+    public int LevelToSpinnerPosition(int level, boolean TDollLevel) {
+        if(!TDollLevel && level == 10) return 9;
         switch (level) {
             case 1:
                 return 0;
@@ -341,7 +510,7 @@ public class Utils {
         return Equipment;
     }
 
-    public int EquipmentSlot(int type){
+    public int EquipmentSlot(int type, int dollType){
         switch(type) {
             case 1://Crit Scope
             case 2://Holo Sight
@@ -393,7 +562,13 @@ public class Utils {
             case 89://RFB EX Equip
             case 90://Type 100 EX Equip
             case 91://Beretta Model 38 Mod Scope
-                return 1;
+                switch(dollType) {
+                    case 2:
+                    case 6: return 3;
+                    case 3:
+                    case 5: return 2;
+                    default: return 1;
+                }
             case 5://AP Rounds
             case 6://HP Rounds
             case 7://Slug
@@ -411,7 +586,11 @@ public class Utils {
             case 66://Jill EX Equip
             case 72://Dorothy EX Equip
             case 79://KS-23 EX Rounds
-                return 2;
+                switch(dollType) {
+                    case 3:
+                    case 5: return 1;
+                    default: return 2;
+                }
             case 10://Exo
             case 11://Armour Plate
             case 12://High Evasion Exo
@@ -437,11 +616,33 @@ public class Utils {
             case 86://Tar-21 EX Equip
             case 88://RPD EX Equip
             case 92://Stechkin Mod Equip
-                return 3;
-            default:
-
-                return 0;
+                switch(dollType) {
+                    case 2:
+                    case 6: return 1;
+                    default: return 3;
+                }
+            default: return 0;
         }
+    }
+
+    public boolean ValidEquip(Doll doll, int equipType){
+        switch(doll.getType()){
+            case 1: return (SPEQCheck(doll, equipType) || equipType == 4) || (equipType == 6) || (equipType == 10) || (equipType == 12) || (equipType == 13);
+            case 2: return (SPEQCheck(doll, equipType) || equipType < 5) || (equipType == 6) || (equipType == 10) || (equipType == 12) || (equipType == 13);
+            case 3: return (SPEQCheck(doll, equipType) || equipType < 4) || (equipType == 5) || (equipType == 15);
+            case 4: return (SPEQCheck(doll, equipType) || equipType < 5) || (equipType == 8) || (equipType == 10) || (equipType == 12);
+            case 5: return (SPEQCheck(doll, equipType) || equipType < 4) || (equipType == 5) || (equipType == 14);
+            default: return (SPEQCheck(doll, equipType) || equipType < 4) || (equipType == 7) || (equipType == 9) || (equipType == 11);
+        }
+    }
+
+    private boolean SPEQCheck(Doll doll, int equipType){
+        if(SPEQ.containsKey(doll.getID())){
+            List<Integer> speq = new ArrayList<>();
+            for(int ID : Objects.requireNonNull(SPEQ.get(doll.getID()))) speq.add(ID);
+            return speq.contains(equipType);
+        }
+        return false;
     }
 
 //    public int[][] getDollTilesFormation(Doll doll){

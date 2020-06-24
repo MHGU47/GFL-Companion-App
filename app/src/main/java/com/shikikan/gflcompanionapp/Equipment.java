@@ -1,11 +1,12 @@
 package com.shikikan.gflcompanionapp;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Equipment {
 
     private int id, type, rarity, fp, acc, eva, movespeed, rof, critdmg, crit, ap, armour, nightview, rounds,
-        construct_time;
+        construct_time, level;
     private JSONObject rawLevelBonus;
     private int[] levelBonus;
     private boolean en_craftable, en_released;
@@ -30,14 +31,17 @@ public class Equipment {
             construct_time = (int) equipData.get("construct_time");
 
             rawLevelBonus = (JSONObject) equipData.get("level_bonus");
-            levelBonus = null;
+            levelBonus = new int[11];
+            setLevelBonuses();
+            levelBonus = getLevelBonuses();
+            level = 1;
 
             en_craftable = (boolean) equipData.get("en_craftable");
             en_released = (boolean) equipData.get("en_released");
 
             name = (String) equipData.get("name");
             tooltip = (String) equipData.get("tooltip");
-            image = "equip_" + equipData.get("id");
+            image = FindImage((Integer)equipData.get("type"));
         }
         catch (Exception e){
             setNull();
@@ -61,8 +65,9 @@ public class Equipment {
         this.nightview = equipment.getNightview();
         this.rounds = equipment.getRounds();
         this.construct_time = equipment.getConstruct_time();
-        this.rawLevelBonus = equipment.getRawLevelBonus();
-        this.levelBonus = equipment.getLevelBonus();
+        this.rawLevelBonus = equipment.getRawLevelBonuses();
+        this.levelBonus = equipment.getLevelBonuses();
+        this.level = equipment.getLevel();
         this.en_craftable = equipment.getEn_Craftable();
         this.en_released = equipment.getEn_Released();
         this.name = equipment.getName();
@@ -92,7 +97,8 @@ public class Equipment {
         construct_time = 0;
 
         rawLevelBonus = null;
-        levelBonus = null;
+        levelBonus = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        level = 1;
 
         en_craftable = false;
         en_released = false;
@@ -106,6 +112,13 @@ public class Equipment {
     }
     public int getID(){
         return id;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    public int getLevel() {
+        return level;
     }
 
     public void setType(int type){
@@ -206,18 +219,49 @@ public class Equipment {
         return construct_time;
     }
 
-    public void setRawLevelBonus(JSONObject rawLevelBonus){
-        this.rawLevelBonus = rawLevelBonus;
-    }
-    public JSONObject getRawLevelBonus(){
+//    public void setRawLevelBonus(JSONObject rawLevelBonus){
+//        this.rawLevelBonus = rawLevelBonus;
+//    }
+    public JSONObject getRawLevelBonuses(){
         return rawLevelBonus;
     }
 
-    public void setLevelBonus(int[] levelBonus){
-        this.levelBonus = levelBonus;
+    public void setLevelBonuses(){
+        //this.levelBonus = levelBonus;
+        try{
+            levelBonus[0] = (int) rawLevelBonus.get("fp");
+            levelBonus[1] = (int) rawLevelBonus.get("acc");
+            levelBonus[2] = (int) rawLevelBonus.get("eva");
+            levelBonus[3] = (int) rawLevelBonus.get("movespeed");
+            levelBonus[4] = (int) rawLevelBonus.get("rof");
+            levelBonus[5] = (int) rawLevelBonus.get("critdmg");
+            levelBonus[6] = (int) rawLevelBonus.get("crit");
+            levelBonus[7] = (int) rawLevelBonus.get("ap");
+            levelBonus[8] = (int) rawLevelBonus.get("armor");
+            levelBonus[9] = (int) rawLevelBonus.get("nightview");
+            levelBonus[10] = (int) rawLevelBonus.get("rounds");
+        }
+        catch (JSONException e){
+
+        }
     }
-    public int[] getLevelBonus(){
+    public int[] getLevelBonuses(){
         return levelBonus;
+    }
+    public int getLevelBonus(String bonus){
+        switch(bonus){
+            case "fp": return levelBonus[0];
+            case "acc": return levelBonus[1];
+            case "eva": return levelBonus[2];
+            case "movespeed": return levelBonus[3];
+            case "rof": return levelBonus[4];
+            case "critdmg": return levelBonus[5];
+            case "crit": return levelBonus[6];
+            case "ap": return levelBonus[7];
+            case "armour": return levelBonus[8];
+            case "nightview": return levelBonus[9];
+            default: return levelBonus[10];
+        }
     }
 
     public void setEn_craftable(boolean en_craftable){
@@ -250,5 +294,26 @@ public class Equipment {
 
     public String getImage() {
         return image;
+    }
+
+    private String FindImage(int Type){
+        switch(Type){
+            case 1: return "equip_1";//Crit Scope
+            case 2: return "equip_2";//Holo Scope
+            case 3: return "equip_3";//Red Dot
+            case 4: return "equip_4";//PEQ
+            case 5: return "equip_5";//AP Rounds
+            case 6: return "equip_6";//HP Rounds
+            case 7: return "equip_7";//Slug
+            case 8: return "equip_8";//HV Rounds
+            case 9: return "equip_9";//Buckshot
+            case 10: return "equip_10";//Exo
+            case 11: return "equip_11";//Armour Plate
+            case 12: return "equip_12";//High Eva Exo
+            case 13: return "equip_13";//Suppressor
+            case 14: return "equip_14";//Ammo Box
+            case 15: return "equip_15";//Cape
+            default: return "equip_" + Type;
+        }
     }
 }

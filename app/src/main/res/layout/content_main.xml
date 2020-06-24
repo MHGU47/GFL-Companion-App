@@ -156,7 +156,7 @@
                         android:layout_alignParentStart="true">
 
                         <Spinner
-                            android:id="@+id/level_select"
+                            android:id="@+id/tdoll_level_select"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/level_label" />
@@ -493,32 +493,90 @@
                     android:layout_below="@id/stats"
                     android:layout_alignParentBottom="true">
 
-                    <ImageView
-                        android:id="@+id/equipSlot_1"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:onClick="onClick"
-                        app:srcCompat="@drawable/placeholder" />
+                    <RelativeLayout
+                        android:id="@+id/slot_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true">
 
-                    <ImageView
-                        android:id="@+id/equipSlot_2"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_below="@id/equipSlot_1"
-                        android:layout_alignParentStart="true"
-                        android:onClick="onClick"
-                        app:srcCompat="@drawable/placeholder" />
+                        <ImageView
+                            android:id="@+id/equipSlot_1"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:onClick="onClick"
+                            app:srcCompat="@drawable/adddoll" />
 
-                    <ImageView
-                        android:id="@+id/equipSlot_3"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
-                        android:layout_below="@id/equipSlot_2"
-                        android:layout_alignParentStart="true"
-                        android:onClick="onClick"
-                        app:srcCompat="@drawable/placeholder" />
+                        <Spinner
+                            android:id="@+id/equipLevelSelectSlot_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true" />
+
+                        <TextView
+                            android:id="@+id/lockedSlot_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="Unlocked at Lv.20"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/slot_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/slot_1">
+
+                        <ImageView
+                            android:id="@+id/equipSlot_2"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:onClick="onClick"
+                            app:srcCompat="@drawable/adddoll" />
+
+                        <Spinner
+                            android:id="@+id/equipLevelSelectSlot_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true" />
+
+                        <TextView
+                            android:id="@+id/lockedSlot_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="Unlocked at Lv.50"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/slot_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/slot_2">
+
+                        <ImageView
+                            android:id="@+id/equipSlot_3"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:onClick="onClick"
+                            app:srcCompat="@drawable/adddoll" />
+
+                        <Spinner
+                            android:id="@+id/equipLevelSelectSlot_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true" />
+
+                        <TextView
+                            android:id="@+id/lockedSlot_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="Unlocked at Lv.80"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
                 </RelativeLayout>
 
             </RelativeLayout>

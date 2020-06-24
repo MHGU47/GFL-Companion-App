@@ -392,25 +392,74 @@
 -Added new function 'EquipmentSlot(int)' to 'Utils.java'; this will be used to determine which slot
  to assign the given equipment.
 
+16/06/2020
+-Equip slots change icon based on selected equipment
+-Equipment selection screen images match corresponding equipment
 
+17/06/2020
+-Added new function 'ImageViewSetUp()' to 'SelectionFragment.java'; this is to change the sizes of
+ the 'ImageViews' depending on whether the user is selecting a T-Doll or a piece of equipment.
+-Reverted function 'LoadPage(boolean, int)' in 'SelectionFragment.java'; it doesn't need a boolean to
+ be passed in.
+-Altered function 'setUp_EquipmentSelect(Equipment[], Context, int) in 'SelectionFragment.java'; it
+ now takes a second 'int'. This is so it can determine which type of equipment to display.
+-Equip slots now open up corresponding equipment type
+
+19/06/2020
+-Added new function 'ValidEquip(int, int)' to 'Utils.java'; this will be used to determine which
+ equipment should be displayed for the current T-Doll.
+-Altered function 'setUp_EquipmentSelect(Equipment[], Context, int, int)' in 'SelectionFragment.java';
+ it now takes 'Utils' as a parameter. Also, instead of taking two 'int's as parameters, one of these
+ is now a 'Doll' object. These changes are to allow it to use 'ValidEquip(int, int)'.
+-Equipment that can't equipped by a T-Doll is not displayed anymore
+
+22/06/2020
+-Altered function 'ValidEquip(int, int)' in 'Utils.java'; one of the 'int' parameters has been
+ changed to a 'Doll' parameter. This is to correctly check for SPEQ and other exception equips.
+-Added new function 'SPEQCheck(Doll, int)' in 'Utils.java'; this is used to determine whether to display
+ SPEQs for a specified T-Doll.
+
+23/06/2020
+-SPEQs can be selected properly now
+-Added new function 'CalculateStats(Echelon, Doll)' in 'Calculate.java'; this is to calculate the
+ stats as a result of the tile buffs, equipment etc.
+-Added new functions in 'Calculation.java'; these functions are there to return the calculated stats
+ when the buffs are applied.
+-Added spinners for selecting equipment levels
+-Equipment properly alters stats when equipped. This works alongside tile buffs as well. There seems
+ to be a margin of error of 1, this can be seen when Lv.120 ST AR-15 Mod 3 has her SPEQ accessory and
+ is buffed by Lv.1 SAA, both with base affection and no skills active. This margin of error is
+ currently seen in her FP, as the online calculations show it as 57, not 56.
+-Equipment is properly locked behind level gates
+
+24/06/2020
+-Altered function 'levelChange(Doll)' in 'Utils.java'; it now takes 'Echelon' as a parameter instead
+ of 'Doll'. This is because 'levelChange()' is now called in 'CalculateStats(Echelon)' and runs
+ through the whole echelon instead of an individual T-Doll.
+-Renamed 'displayDollGrid(View)' to 'displayDollTiles(View)' in 'UI.java'
+-Altered function 'EquipmentSlot(int)' in 'Utils.java'; this function now takes another 'int' parameter.
+ This is so it can change the slot that is selected based on the T-Doll type.
+-Equipment slots correctly correspond to equipment slots that each weapon type has
 
 #LEAVE UI THINGS FOR NOW UNLESS NECESSARY
 
-#CURRENTLY DOING: Equipment - Adding in the framework (Testing out selection. Currently images don't
-                              show and the image names don't line up properly, as well as menu
-                              navigation buttons not showing up)
+#CURRENTLY DOING: Adding in affection
 
 
 TODO LIST ORDER
 -Add in affection
+-Add in skill functionality
 -Add skill buffing functionality
     -Allow this to be reflected on the stats display
--Add in skill functionality
 -Add DPS display
+-Add in stat breakdown
+    -Stats overflow e.g. ROF. Maybe even point to suggestions
+    -Show which stats are buffed and by what
 -Add fairies
 -Other shit...
 -UI tweaks
-    -Make stats refresh after moving a T-Doll on the grid
+    -Replace all T-Doll images with ones from the Wiki. This is due to them being of higher quality
+     and the fact that maybe they won't be affected by background changes.
 
 
 Grid key for JSON file

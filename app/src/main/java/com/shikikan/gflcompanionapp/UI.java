@@ -20,7 +20,6 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -32,14 +31,17 @@ import android.widget.TextView;
 public class UI extends AppCompatActivity implements SelectionFragment.SelectionListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private ImageButton[] selectButtons;
-    private String[] AllImageViewIDs = {"pos_1", "pos_2", "pos_3",
-            "pos_4", "pos_5", "pos_6", "pos_7", "pos_8", "pos_9"};
+    private ImageView[] equipViews;
+    private String[] AllGridImageViewIDs = {"pos_1", "pos_2", "pos_3",
+            "pos_4", "pos_5", "pos_6", "pos_7", "pos_8", "pos_9"},
+    AllEquipImageViewIDs = {"equipSlot_1", "equipSlot_2", "equipSlot_3"},
+    AllDollImageViewIDs = {"doll_1","doll_2","doll_3","doll_4","doll_5"};
     private TextView[] Stats;
-    private Spinner TDollLevelSelect, SkillLevelSelect;
+    private Spinner TDollLevelSelect, SkillLevelSelect, EquipLevelSelectLevel_1, EquipLevelSelectLevel_2, EquipLevelSelectLevel_3;
     private Utils u = new Utils();
     private Echelon e;
     private Calculation c;
-    private int selectedDoll = 0;
+    private int selectedDoll = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,21 +130,37 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                                findViewById(R.id.rounds_text), findViewById(R.id.armour_text),
                                findViewById(R.id.ap_text)};
 
-        TDollLevelSelect = findViewById(R.id.level_select);
+        TDollLevelSelect = findViewById(R.id.tdoll_level_select);
         SkillLevelSelect = findViewById(R.id.skill_level_select);
+        EquipLevelSelectLevel_1 = findViewById(R.id.equipLevelSelectSlot_1);
+        EquipLevelSelectLevel_2 = findViewById(R.id.equipLevelSelectSlot_2);
+        EquipLevelSelectLevel_3 = findViewById(R.id.equipLevelSelectSlot_3);
 
-        ArrayAdapter TDollLevelAdapter = ArrayAdapter.createFromResource(this,R.array.tdoll_level,
+        ArrayAdapter TDollLevelAdapter = ArrayAdapter.createFromResource(this, R.array.tdoll_level,
                 android.R.layout.simple_spinner_dropdown_item);
         TDollLevelSelect.setAdapter(TDollLevelAdapter);
         TDollLevelSelect.setOnItemSelectedListener(this);
 
-        ArrayAdapter SkillLevelAdapter = ArrayAdapter.createFromResource(this,R.array.skill_level,
+        ArrayAdapter LevelAdapter = ArrayAdapter.createFromResource(this, R.array.skill_level,
                 android.R.layout.simple_spinner_dropdown_item);
-        SkillLevelSelect.setAdapter(SkillLevelAdapter);
+
+        SkillLevelSelect.setAdapter(LevelAdapter);
         SkillLevelSelect.setOnItemSelectedListener(this);
+
+        EquipLevelSelectLevel_1.setAdapter(LevelAdapter);
+        EquipLevelSelectLevel_1.setOnItemSelectedListener(this);
+
+        EquipLevelSelectLevel_2.setAdapter(LevelAdapter);
+        EquipLevelSelectLevel_2.setOnItemSelectedListener(this);
+
+        EquipLevelSelectLevel_3.setAdapter(LevelAdapter);
+        EquipLevelSelectLevel_3.setOnItemSelectedListener(this);
 
         selectButtons = new ImageButton[]{findViewById(R.id.doll_1), findViewById(R.id.doll_2),
                 findViewById(R.id.doll_3), findViewById(R.id.doll_4), findViewById(R.id.doll_5)};
+
+        equipViews = new ImageView[]{findViewById(R.id.equipSlot_1), findViewById(R.id.equipSlot_2),
+                                         findViewById(R.id.equipSlot_3)};
     }
 
     /**
@@ -162,7 +180,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         grid.getLayoutParams().height = width;
 
         for(int i = 0; i < 9; i++) {
-            imageViews[i] = findViewById(getResources().getIdentifier(AllImageViewIDs[i], "id", getPackageName()));
+            imageViews[i] = findViewById(getResources().getIdentifier(AllGridImageViewIDs[i], "id", getPackageName()));
             if(portrait){
                 imageViews[i].getLayoutParams().height = width/3;
                 imageViews[i].getLayoutParams().width = width/3;
@@ -181,11 +199,15 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     @Override
     public void onDollSelect(int dollID, int echelonPosition) {
         updateEchelon(dollID, echelonPosition);
+        selectedDoll = echelonPosition;
+        displayStats(e.getDoll(echelonPosition - 1).getGridImageView());
     }
 
     @Override
     public void onEquipmentSelect(int equipID, int selectedDoll) {
-        e.getDoll(selectedDoll - 1).setEquipment(u.getEquipment(equipID), u.EquipmentSlot(u.getEquipment(equipID).getID()));
+        e.getDoll(selectedDoll - 1).setEquipment(u.getEquipment(equipID), u.EquipmentSlot(u.getEquipment(equipID).getType(), e.getDoll(selectedDoll - 1).getType()));
+        this.selectedDoll = selectedDoll;
+        displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
     }
 
     @Override
@@ -211,6 +233,10 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.removeDoll_4:
             case R.id.removeDoll_5:
                 e.removeDoll(u.IDtoInt(v));
+                if(e.getDoll(selectedDoll - 1).getID() == 0)
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                else updateUI();
+                break;
             case R.id.pos_1:
             case R.id.pos_2:
             case R.id.pos_3:
@@ -221,14 +247,16 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.pos_8:
             case R.id.pos_9:
                 displayStats(v);
-                displayDollGrid(v);
+                displayDollTiles(v);
                 break;
             case R.id.equipSlot_1:
             case R.id.equipSlot_2:
             case R.id.equipSlot_3:
-                sf = new SelectionFragment();
-                sf.setUp_EquipmentSelect(u.getAllEquipment(), UI.this, selectedDoll);
-                sf.show(getSupportFragmentManager(), "test");
+                if(e.getDoll(selectedDoll - 1).getID() != 0) {
+                    sf = new SelectionFragment();
+                    sf.setUp_EquipmentSelect(u.getAllEquipment(), UI.this, e.getDoll(selectedDoll - 1), u.IDtoInt(v) - 1, u);
+                    sf.show(getSupportFragmentManager(), "test");
+                }
                 break;
         }
     }
@@ -262,27 +290,32 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     }
 
     public void displayStats(View gridImageView) {
-        selectedDoll = 0;
-        c.CalculateTileBuffs(e);
+        updateUI();
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
-                u.levelchange(doll);
+                c.CalculateStats(e);
                 Stats[0].setText(doll.getName());
                 Stats[1].setText(String.valueOf(doll.getHp()));
-                Stats[2].setText(String.valueOf((int)Math.ceil(doll.getFp() * doll.getTileBuff("fp"))));
-                Stats[3].setText(String.valueOf((int)Math.ceil(doll.getAcc() * doll.getTileBuff("acc"))));
-                Stats[4].setText(String.valueOf((int)Math.ceil(doll.getEva() * doll.getTileBuff("eva"))));
-                Stats[5].setText(String.valueOf((int)Math.ceil(doll.getRof() * doll.getTileBuff("rof"))));
-                Stats[6].setText(String.valueOf((int)Math.ceil(doll.getCrit() * doll.getTileBuff("crit"))));
-                Stats[7].setText(String.valueOf(doll.getCritdmg()));
-                Stats[8].setText(String.valueOf(doll.getRounds()));
-                Stats[9].setText(String.valueOf((int)Math.ceil(doll.getArmour() * doll.getTileBuff("armour"))));
-                Stats[10].setText(String.valueOf(doll.getAp()));
+                Stats[2].setText(String.valueOf((int)Math.ceil(c.calcFP(doll))));
+                Stats[3].setText(String.valueOf((int)Math.ceil(c.calcAcc(doll))));
+                Stats[4].setText(String.valueOf((int)Math.ceil(c.calcEva(doll))));
+                Stats[5].setText(String.valueOf((int)Math.ceil(c.calcRof(doll))));
+                Stats[6].setText(String.valueOf((int)Math.ceil(c.calcCrit(doll))));
+                Stats[7].setText(String.valueOf((int)c.calcCritDmg(doll)));
+                Stats[8].setText(String.valueOf((int)c.calcRounds(doll)));
+                Stats[9].setText(String.valueOf((int)c.calcArmour(doll)));
+                Stats[10].setText(String.valueOf((int)c.calcAP(doll)));
+
+
                 selectedDoll = doll.getEchelonPosition();
-                TDollLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getLevel(), false));
-                SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkillLevel(), true));
+                TDollLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getLevel(), true));
+                SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkillLevel(), false));
+                EquipLevelSelectLevel_1.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(0).getLevel(),false));
+                EquipLevelSelectLevel_2.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(1).getLevel(),false));
+                EquipLevelSelectLevel_3.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(2).getLevel(),false));
                 break;
             }
+            else for(TextView textView : Stats) textView.setText("-");
         }
     }
 
@@ -301,24 +334,111 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     }
 
     private void updateUI() {
-        for (String ImageViewID : AllImageViewIDs) {
+        //Reset grid
+        for (String ImageViewID : AllGridImageViewIDs) {
             ImageView t = findViewById(getResources().getIdentifier(ImageViewID, "id", getPackageName()));
             t.setImageResource(0);
             t.setBackgroundColor(Color.TRANSPARENT);
         }
 
+        //Reset echelon T-Doll images
+        for (String ImageViewID : AllDollImageViewIDs) {
+            ImageView t = findViewById(getResources().getIdentifier(ImageViewID, "id", getPackageName()));
+            t.setImageResource(R.drawable.adddoll);
+        }
+
+        //Reset equipment images
+        for (String ImageViewID : AllEquipImageViewIDs) {
+            ImageView t = findViewById(getResources().getIdentifier(ImageViewID, "id", getPackageName()));
+            t.setImageResource(R.drawable.adddoll);
+        }
+
+        //Set T-Doll images on grid
         for (int i = 0; i < e.getAllDolls().length; i++) {
             e.getDoll(i).getGridImageView().setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
         }
 
+        //Set T-Doll images on echelon display
         for (int i = 0; i < e.getAllDolls().length; i++){
             if(e.getDoll(i).getID() != 0){
                 selectButtons[i].setImageResource(getResources().getIdentifier(e.getDoll(i).getImage(), "drawable", getPackageName()));
             }
         }
+
+        //Set equipment images
+        for (Doll doll : e.getAllDolls()){
+            if(doll.getID() != 0 && doll.getEchelonPosition() == selectedDoll){
+                for (Equipment equipment : doll.getAllEquipment()){
+                    if(equipment.getID() != 0){
+                        equipViews[u.EquipmentSlot(equipment.getType(), e.getDoll(selectedDoll - 1).getType()) - 1].setImageResource(getResources().getIdentifier(equipment.getImage(), "drawable", getPackageName()));
+                    }
+                }
+            }
+        }
+
+        //Set equipment selection based on T-Doll level
+        switch(e.getDoll(selectedDoll - 1).getLevel()){
+            case 1:
+            case 10:
+                findViewById(R.id.equipSlot_1).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_1).setVisibility(View.VISIBLE);
+
+                findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+
+                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                break;
+            case 20:
+            case 30:
+            case 40:
+                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+
+                findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+
+                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                break;
+            case 50:
+            case 60:
+            case 70:
+                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+
+                findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
+
+                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                break;
+            default:
+                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+
+                findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
+
+                findViewById(R.id.equipSlot_3).setVisibility(View.VISIBLE);
+                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.VISIBLE);
+                findViewById(R.id.lockedSlot_3).setVisibility(View.GONE);
+                break;
+        }
     }
 
-    private void displayDollGrid(View gridImageView) {
+    private void displayDollTiles(View gridImageView) {
         updateUI();
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
@@ -330,27 +450,6 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             }
         }
     }
-
-    /**
-     * Used to update the information displayed on the UI. Is called whenever a change is made, such
-     * as a formation change or swapping equipment.
-     */
-    /*private void Update(){
-        Stats[0].setText(u.getDoll(iii).getName());
-        Stats[1].setText(u.getDoll(iii).getName());
-        Stats[2].setText(u.getDoll(iii).getName());
-        Stats[3].setText(String.valueOf(u.getDoll(iii).getHp()));
-        Stats[4].setText(String.valueOf(u.getDoll(iii).getFp()));
-        Stats[5].setText(String.valueOf(u.getDoll(iii).getAcc()));
-        Stats[6].setText(String.valueOf(u.getDoll(iii).getEva()));
-        Stats[7].setText(String.valueOf(u.getDoll(iii).getRof()));
-        Stats[8].setText(String.valueOf(u.getDoll(iii).getCrit()));
-        Stats[9].setText(String.valueOf(u.getDoll(iii).getCritdmg()));
-        Stats[10].setText(String.valueOf(u.getDoll(iii).getRounds()));
-        Stats[11].setText(String.valueOf(u.getDoll(iii).getArmour()));
-        Stats[12].setText(String.valueOf(u.getDoll(iii).getAp()));
-        iii++;
-    }*/
 
     private View.OnLongClickListener listenClick = new View.OnLongClickListener()
     {
@@ -426,7 +525,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     dragged.setVisibility(View.VISIBLE);
                     v.setBackgroundColor(Color.TRANSPARENT);
                     v.setAlpha(1);
-                    updateUI();
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
             }
 
@@ -436,15 +535,27 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if(selectedDoll != 0){
+        if(e.getDoll(selectedDoll - 1).getID() != 0){
             switch (parent.getId()){
-                case R.id.level_select:
-                    String t = ((Spinner)findViewById(R.id.level_select)).getSelectedItem().toString();
+                case R.id.tdoll_level_select:
+                    String t = ((Spinner)findViewById(R.id.tdoll_level_select)).getSelectedItem().toString();
                     e.getDoll(selectedDoll - 1).setLevel(Integer.parseInt(t));
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
                 case R.id.skill_level_select:
                     e.getDoll(selectedDoll - 1).setSkillLevel(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                    break;
+                case R.id.equipLevelSelectSlot_1:
+                    e.getDoll(selectedDoll - 1).getEquipment(0).setLevel(Integer.parseInt(((Spinner)findViewById(R.id.equipLevelSelectSlot_1)).getSelectedItem().toString()));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                    break;
+                case R.id.equipLevelSelectSlot_2:
+                    e.getDoll(selectedDoll - 1).getEquipment(1).setLevel(Integer.parseInt(((Spinner)findViewById(R.id.equipLevelSelectSlot_2)).getSelectedItem().toString()));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                    break;
+                case R.id.equipLevelSelectSlot_3:
+                    e.getDoll(selectedDoll - 1).getEquipment(2).setLevel(Integer.parseInt(((Spinner)findViewById(R.id.equipLevelSelectSlot_3)).getSelectedItem().toString()));
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
             }

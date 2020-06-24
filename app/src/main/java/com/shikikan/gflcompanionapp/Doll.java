@@ -24,7 +24,7 @@ public class Doll {
 
     private ImageView gridPosition_imageview;
 
-    private int[]tilesFormation, tilesBuffs, receivedTileBuffs;
+    private int[]tilesFormation, tilesBuffs, receivedTileBuffs, equipmentBuffs;
 
     private Equipment[] equipment;
 
@@ -74,6 +74,7 @@ public class Doll {
             gridPosition_imageview = null;
             echelonPosition = 0;
             receivedTileBuffs = new int[]{0, 0, 0, 0, 0, 0, 0};
+            equipmentBuffs = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
             equipment = new Equipment[]{new Equipment(), new Equipment(), new Equipment()};
 
@@ -130,6 +131,7 @@ public class Doll {
         this.tilesFormation = newDoll.getTilesFormation();
         this.tilesBuffs = newDoll.getTilesBuffs();
         this.receivedTileBuffs = newDoll.getReceivedTileBuffs();
+        this.equipmentBuffs = newDoll.getEquipmentBuffs();
         this.equipment = newDoll.getAllEquipment();
     }
 
@@ -178,6 +180,7 @@ public class Doll {
         echelonPosition = 0;
         image = "placeholder";
         receivedTileBuffs = null;
+        equipmentBuffs = null;
         equipment = null;
     }
 
@@ -386,19 +389,35 @@ public class Doll {
         return echelonPosition;
     }
 
+    //Equipment
+
     public void setEquipment(Equipment equip, int slot){
-//        switch(slot){
-//            case 1:
-//                equipment[0] = equip;
-//                break;
-//            case 2:
-//                equipment[1] = equip;
-//                break;
-//            case 3:
-//                equipment[2] = equip;
-//                break;
-//        }
-        equipment[slot - 1] = equip;
+        equipment[slot - 1] = new Equipment(equip);
+    }
+
+    public void removeEquipment(int slot){
+        if(slot == 0){
+            switch(level){
+                case 1:
+                case 10:
+                    equipment = new Equipment[]{new Equipment(), new Equipment(), new Equipment()};
+                    break;
+                case 20:
+                case 30:
+                case 40:
+                    equipment[1] = new Equipment();
+                    equipment[2] = new Equipment();
+                    break;
+                case 50:
+                case 60:
+                case 70:
+                    equipment[2] = new Equipment();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else equipment[slot - 1] = new Equipment();
     }
 
     public Equipment[] getAllEquipment(){
@@ -409,7 +428,31 @@ public class Doll {
         return equipment[index];
     }
 
-    //Tiles and Buffs
+    public void setEquipmentBuffs(int[] buffs){
+        equipmentBuffs = buffs;
+    }
+
+    public int[] getEquipmentBuffs(){
+        return equipmentBuffs;
+    }
+
+    public float getEquipmentBuff(String buff){
+        switch(buff){
+            case "fp": return (float)equipmentBuffs[0];
+            case "acc": return (float)equipmentBuffs[1];
+            case "eva": return (float)equipmentBuffs[2];
+            case "movespeed": return (float)equipmentBuffs[3];
+            case "rof": return (float)equipmentBuffs[4];
+            case "critdmg": return (float)equipmentBuffs[5];
+            case "crit": return (float)equipmentBuffs[6];
+            case "ap": return (float)equipmentBuffs[7];
+            case "armour": return (float)equipmentBuffs[8];
+            case "nightview": return (float)equipmentBuffs[9];
+            default: return (float)equipmentBuffs[10];
+        }
+    }
+
+    //Tiles
 
     public void setTiles(int[][] tiles){
         tilesFormation = tiles[0];
@@ -426,7 +469,6 @@ public class Doll {
 
     public void setReceivedTileBuffs(int[] buffs){
         receivedTileBuffs = buffs;
-        //for(int i = 0; i < buffs.length; i++) receivedTileBuffs[i] += buffs[i];
     }
 
     public int[] getReceivedTileBuffs(){

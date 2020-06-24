@@ -177,6 +177,7 @@
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
+                android:scaleType="center"
                 app:srcCompat="@drawable/doll_122" />
 
             <ImageButton
@@ -195,6 +196,7 @@
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
+                android:scaleType="center"
                 app:srcCompat="@drawable/doll_234" />
         </LinearLayout>
 
@@ -202,38 +204,40 @@
             android:id="@+id/extra_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <ImageButton
-                android:id="@+id/dollSelect_7"
+                android:id="@+id/select_7"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
-                android:scaleType="center"
-                android:visibility="gone"
-                app:srcCompat="@drawable/doll_48" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/equip_9" />
 
             <ImageButton
-                android:id="@+id/dollSelect_8"
+                android:id="@+id/select_8"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/doll_46" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/equip_91" />
 
             <ImageButton
-                android:id="@+id/dollSelect_9"
+                android:id="@+id/select_9"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:onClick="onClick"
                 android:padding="10dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/doll_256" />
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:srcCompat="@drawable/equip_92" />
 
         </LinearLayout>
 

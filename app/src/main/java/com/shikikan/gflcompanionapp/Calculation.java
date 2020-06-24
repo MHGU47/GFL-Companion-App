@@ -1,14 +1,13 @@
 package com.shikikan.gflcompanionapp;
 
 public class Calculation {
-    Utils u;
+    private Utils u;
 
     public Calculation(Utils u){
         this.u = u;
     }
 
-    public void CalculateTileBuffs(Echelon e){
-        ResetBuffs(e);
+    private void CalculateTileBuffs(Echelon e){
         int[] tiles;
         //Cycle through every T-Doll in the echelon.
         for(Doll doll : e.getAllDolls()){
@@ -25,8 +24,6 @@ public class Calculation {
                             //...they aren't a dummy T-Doll and they can be buffed by the tile...
                             if ((od.getType() == doll.getTilesBuffs()[0] || doll.getTilesBuffs()[0] == 0) && od.getID() != 0) {
                                 //...highlight the tile.
-                                //od.getGridImageView().setBackgroundColor(u.getHighlight());
-
                                 int[] receiver = od.getReceivedTileBuffs(), buffer = doll.getTilesBuffs(), buffs = new int[7];
                                 //Key - Buffer: 0 = Target, 1 = FP, 2 = ACC, 3 = EVA, 4 = ROF, 5 = CRIT, 6 = SKILLCD, 7 = ARMOUR
                                 //Key - Buffer (HG): 0 = Target, 1 = FP-MIN, 2 = FP-MAX, 3 = ACC-MIN, 4 = ACC-MAX, 5 = EVA-MIN, 6 = EVA-MAX, 7 = ROF-MIN
@@ -60,11 +57,84 @@ public class Calculation {
                 }
             }
         }
+    }
 
-        //ApplyBuffs(e);
+    private void CalculateEquipmentBuffs(Echelon e){
+        int[] buffs;
+        //Equipment[] equips;
+        for(Doll doll : e.getAllDolls()){
+            if(doll.getID() != 0){
+                buffs = doll.getEquipmentBuffs();
+                //equips = doll.getAllEquipment();
+                for(Equipment equipment : doll.getAllEquipment()){
+                    buffs[0] += Math.floor((equipment.getLevelBonus("fp") / 10000f * equipment.getLevel() + 1) * equipment.getFp());
+                    buffs[1] += Math.floor((equipment.getLevelBonus("acc") / 10000f * equipment.getLevel() + 1) * equipment.getAcc());
+                    buffs[2] += Math.floor((equipment.getLevelBonus("eva") / 10000f * equipment.getLevel() + 1) * equipment.getEva());
+                    buffs[4] += Math.floor((equipment.getLevelBonus("rof") / 10000f * equipment.getLevel() + 1) * equipment.getRof());
+                    buffs[5] += Math.floor((equipment.getLevelBonus("critdmg") / 10000f * equipment.getLevel() + 1) * equipment.getCritdmg());
+                    buffs[6] += Math.floor((equipment.getLevelBonus("crit") / 10000f * equipment.getLevel() + 1) * equipment.getCrit());
+                    buffs[7] += Math.floor((equipment.getLevelBonus("ap") / 10000f * equipment.getLevel() + 1) * equipment.getAp());
+                    buffs[8] += Math.floor((equipment.getLevelBonus("armour") / 10000f * equipment.getLevel() + 1) * equipment.getArmour());
+                    buffs[9] += Math.floor((equipment.getLevelBonus("nightview") / 10000f * equipment.getLevel() + 1) * equipment.getNightview());
+                    buffs[10] += Math.floor((equipment.getLevelBonus("rounds") / 10000f * equipment.getLevel() + 1) * equipment.getRounds());
+                }
+                doll.setEquipmentBuffs(buffs);
+            }
+        }
+    }
+
+    public void CalculateStats(Echelon e){
+        u.levelChange(e);
+        ResetBuffs(e);
+        CalculateTileBuffs(e);
+        CalculateEquipmentBuffs(e);
+    }
+
+    public float calcFP(Doll doll){
+        return (doll.getFp() + doll.getEquipmentBuff("fp")) * doll.getTileBuff("fp");
+    }
+
+    public float calcAcc(Doll doll){
+        return (doll.getAcc() + doll.getEquipmentBuff("acc")) * doll.getTileBuff("acc");
+    }
+
+    public float calcEva(Doll doll){
+        return (doll.getEva() + doll.getEquipmentBuff("eva")) * doll.getTileBuff("eva");
+    }
+
+    public float calcRof(Doll doll){
+        return (doll.getRof() + doll.getEquipmentBuff("rof")) * doll.getTileBuff("rof");
+    }
+
+    public float calcCritDmg(Doll doll){
+        return 100 + ((doll.getCritdmg() + doll.getEquipmentBuff("critdmg")) * doll.getTileBuff("critdmg"));
+    }
+
+    public float calcCrit(Doll doll){
+        return (doll.getCrit() + doll.getEquipmentBuff("crit")) * doll.getTileBuff("crit");
+    }
+
+    public float calcAP(Doll doll){
+        return (doll.getAp() + doll.getEquipmentBuff("ap")) * doll.getTileBuff("ap");
+    }
+
+    public float calcArmour(Doll doll){
+        return (doll.getArmour() + doll.getEquipmentBuff("armour")) * doll.getTileBuff("armour");
+    }
+
+    public float calcNightview(Doll doll){
+        return (doll.getEquipmentBuff("nightview"));
+    }
+
+    public float calcRounds(Doll doll){
+        return doll.getRounds() + doll.getEquipmentBuff("rounds");
     }
 
     private void ResetBuffs(Echelon e){
-        for(int i = 0; i < e.getAllDolls().length; i++) e.getDoll(i).setReceivedTileBuffs(new int[7]);
+        //for(int i = 0; i < e.getAllDolls().length; i++) e.getDoll(i).setReceivedTileBuffs(new int[7]);
+        for(Doll doll : e.getAllDolls()){
+            doll.setEquipmentBuffs(new int[11]);
+            doll.setReceivedTileBuffs(new int[7]);
+        }
     }
 }
