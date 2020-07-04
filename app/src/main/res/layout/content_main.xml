@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -169,10 +170,32 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/affection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/level">
+
+                        <Spinner
+                            android:id="@+id/affection_select"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_toEndOf="@id/affection_label" />
+
+                        <TextView
+                            android:id="@+id/affection_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="Affection" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/skill_level"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/level"
+                        android:layout_below="@id/affection"
                         android:layout_alignParentStart="true">
 
                         <Spinner
@@ -206,32 +229,10 @@
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/affection"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/skill_level">
-
-                        <Spinner
-                            android:id="@+id/affection_select"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_toEndOf="@id/affection_label" />
-
-                        <TextView
-                            android:id="@+id/affection_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:text="Affection" />
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
                         android:id="@+id/hp"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/affection"
+                        android:layout_below="@id/skill_level"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
@@ -357,8 +358,7 @@
                         android:id="@+id/crit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/affection"
-                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/skill_level"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
@@ -504,21 +504,35 @@
                             android:layout_width="75dp"
                             android:layout_height="75dp"
                             android:onClick="onClick"
-                            app:srcCompat="@drawable/adddoll" />
+                            app:srcCompat="@drawable/adddoll"
+                            tools:visibility="gone" />
 
                         <Spinner
                             android:id="@+id/equipLevelSelectSlot_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" />
+                            android:layout_alignParentEnd="true"
+                            tools:visibility="gone" />
 
                         <TextView
                             android:id="@+id/lockedSlot_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:text="Unlocked at Lv.20"
-                            android:visibility="gone" />
+                            android:text="@string/NA"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/removeEquipSlot_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toEndOf="@id/equipSlot_1"
+                            android:onClick="onClick"
+                            android:text="Remove"
+                            android:textSize="10sp"
+                            tools:visibility="gone" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -532,21 +546,35 @@
                             android:layout_width="75dp"
                             android:layout_height="75dp"
                             android:onClick="onClick"
-                            app:srcCompat="@drawable/adddoll" />
+                            app:srcCompat="@drawable/adddoll"
+                            tools:visibility="gone" />
 
                         <Spinner
                             android:id="@+id/equipLevelSelectSlot_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" />
+                            android:layout_alignParentEnd="true"
+                            tools:visibility="gone" />
 
                         <TextView
                             android:id="@+id/lockedSlot_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:text="Unlocked at Lv.50"
-                            android:visibility="gone" />
+                            android:text="@string/NA"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/removeEquipSlot_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toEndOf="@id/equipSlot_2"
+                            android:onClick="onClick"
+                            android:text="Remove"
+                            android:textSize="10sp"
+                            tools:visibility="gone" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -560,21 +588,35 @@
                             android:layout_width="75dp"
                             android:layout_height="75dp"
                             android:onClick="onClick"
-                            app:srcCompat="@drawable/adddoll" />
+                            app:srcCompat="@drawable/adddoll"
+                            tools:visibility="gone" />
 
                         <Spinner
                             android:id="@+id/equipLevelSelectSlot_3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" />
+                            android:layout_alignParentEnd="true"
+                            tools:visibility="gone" />
 
                         <TextView
                             android:id="@+id/lockedSlot_3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:text="Unlocked at Lv.80"
-                            android:visibility="gone" />
+                            android:text="@string/NA"
+                            android:visibility="visible" />
+
+                        <Button
+                            android:id="@+id/removeEquipSlot_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toEndOf="@id/equipSlot_3"
+                            android:onClick="onClick"
+                            android:text="Remove"
+                            android:textSize="10sp"
+                            tools:visibility="gone" />
                     </RelativeLayout>
 
                 </RelativeLayout>

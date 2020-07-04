@@ -23,6 +23,13 @@ public class Echelon {
         }
     }
 
+    public Echelon(Echelon e){
+        for(int i = 0; i <  e.getAllDolls().length; i++){
+            this.Dolls[i] = new Doll(e.getDoll(i));
+        }
+        this.imageViews = e.getImageViews();
+    }
+
     /**
      * Used to add the T-Doll to the echelon.
      * @param doll Pass in the selected T-Doll
@@ -110,6 +117,9 @@ public class Echelon {
         movingDoll.setGrid(temp, temp2);
     }
 
+    public ImageView[] getImageViews(){
+        return imageViews;
+    }
 //    public void updateEchelon(){
 //        for (Doll doll : Dolls) {
 //            if (doll.getId() == 0) doll.setGridPosition(Dolls[0].getGridPosition());

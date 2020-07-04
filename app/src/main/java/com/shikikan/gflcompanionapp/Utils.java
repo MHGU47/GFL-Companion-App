@@ -365,15 +365,18 @@ public class Utils {
             case R.id.doll_1:
             case R.id.pos_1:
             case R.id.removeDoll_1:
-            case R.id.equipSlot_1: return 1;
+            case R.id.equipSlot_1:
+            case R.id.removeEquipSlot_1: return 1;
             case R.id.doll_2:
             case R.id.pos_2:
             case R.id.removeDoll_2:
-            case R.id.equipSlot_2: return 2;
+            case R.id.equipSlot_2:
+            case R.id.removeEquipSlot_2: return 2;
             case R.id.doll_3:
             case R.id.pos_3:
             case R.id.removeDoll_3:
-            case R.id.equipSlot_3: return 3;
+            case R.id.equipSlot_3:
+            case R.id.removeEquipSlot_3: return 3;
             case R.id.doll_4:
             case R.id.pos_4:
             case R.id.removeDoll_4: return 4;
@@ -437,6 +440,13 @@ public class Utils {
             default:
                 return 11;
         }
+    }
+
+    public int AffectionToSpinnerPosition(float affection){
+        if(affection == -0.05f) return 0;
+        else if(affection == 0) return 1;
+        else if(affection == 0.05f) return 2;
+        else return 3;
     }
 
     public void LoadDollData(Context context) {

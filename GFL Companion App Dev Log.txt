@@ -440,22 +440,48 @@
 -Altered function 'EquipmentSlot(int)' in 'Utils.java'; this function now takes another 'int' parameter.
  This is so it can change the slot that is selected based on the T-Doll type.
 -Equipment slots correctly correspond to equipment slots that each weapon type has
+-Added equipment removal functionality
+
+30/06/2020
+-Added new function 'AffectionToSpinnerPosition(float)' in 'Utils.java'; this functions in the same
+ way as 'LevelToSpinnerPosition(int, boolean)' except it's used for affection.
+-Added basic affection functionality
+
+01/07/2020
+-Added a copy constructor for 'Echelon.java'; this is to create a new 'Echelon' object in order to
+ to be used for the simulations.
+-Added new function 'PrepBattleEchelon(Echelon)' to 'Calculation.java'; this is used to set up the
+ T-Doll's stats to be used in DPS calculation and simulations.
+-Added extra variables to 'Doll.java'; these are used to hold the altered stats used for the
+ simulations. These have setters and getters to go along with them.
+
+02/07/2020
+-Added new class 'Timer.java'; this will be used to store the timings for attacks used for the
+ simulations.
+
+03/07/2020
+-Added new classes 'Skill.java', 'Buff.java' and 'Passive.java'; these will be used to store the skill,
+ buff and passive information respectively for the T-Doll in question.
+-Started adding in the skeleton of the methods needed for the simulation in 'Calculation.java'
+
+04/07/2020
+-Started filling out 'Skill.java' to accommodate for all skills
 
 #LEAVE UI THINGS FOR NOW UNLESS NECESSARY
 
-#CURRENTLY DOING: Adding in affection
+#CURRENTLY DOING: Adding DPS calculations - (Implementing the 'Skill' class)
 
 
 TODO LIST ORDER
--Add in affection
--Add in skill functionality
--Add skill buffing functionality
-    -Allow this to be reflected on the stats display
 -Add DPS display
 -Add in stat breakdown
     -Stats overflow e.g. ROF. Maybe even point to suggestions
     -Show which stats are buffed and by what
 -Add fairies
+-Add in skill functionality
+    -This will require a new class to hold the skills information
+-Add skill buffing functionality
+    -Allow this to be reflected on the stats display
 -Other shit...
 -UI tweaks
     -Replace all T-Doll images with ones from the Wiki. This is due to them being of higher quality
@@ -508,6 +534,3 @@ Assuming T-Doll is in position 5
 -12 = Back column, directly behind, 1 above (T-Doll in pos 6, tile buff is in pos 7)
 -22 = Back column, directly behind, 2 above (T-Doll in pos 3, tile buff is in pos 7)
  -2 = Back column, directly behind (T-Doll in pos9, tile buff is in pos 7)
-
-
-

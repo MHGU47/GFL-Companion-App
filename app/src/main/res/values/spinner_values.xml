@@ -27,4 +27,11 @@
         <item>100</item>
         <item>120</item>
     </string-array>
+
+    <string-array name="affection_level">
+        <item>Low</item>
+        <item>Normal</item>
+        <item>Max</item>
+        <item>Oathed</item>
+    </string-array>
 </resources>

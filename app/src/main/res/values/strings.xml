@@ -6,6 +6,10 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="lv20unlock">Unlocked at Lv.20</string>
+    <string name="lv50unlock">Unlocked at Lv.50</string>
+    <string name="lv80unlock">Unlocked at Lv.80</string>
+    <string name="NA">N/A</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

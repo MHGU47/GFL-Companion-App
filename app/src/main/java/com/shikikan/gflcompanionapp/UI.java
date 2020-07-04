@@ -37,7 +37,8 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     AllEquipImageViewIDs = {"equipSlot_1", "equipSlot_2", "equipSlot_3"},
     AllDollImageViewIDs = {"doll_1","doll_2","doll_3","doll_4","doll_5"};
     private TextView[] Stats;
-    private Spinner TDollLevelSelect, SkillLevelSelect, EquipLevelSelectLevel_1, EquipLevelSelectLevel_2, EquipLevelSelectLevel_3;
+    private Spinner TDollLevelSelect, SkillLevelSelect, EquipLevelSelectLevel_1, EquipLevelSelectLevel_2,
+            EquipLevelSelectLevel_3, AffectionSelect;
     private Utils u = new Utils();
     private Echelon e;
     private Calculation c;
@@ -132,20 +133,28 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
 
         TDollLevelSelect = findViewById(R.id.tdoll_level_select);
         SkillLevelSelect = findViewById(R.id.skill_level_select);
+        AffectionSelect = findViewById(R.id.affection_select);
         EquipLevelSelectLevel_1 = findViewById(R.id.equipLevelSelectSlot_1);
         EquipLevelSelectLevel_2 = findViewById(R.id.equipLevelSelectSlot_2);
         EquipLevelSelectLevel_3 = findViewById(R.id.equipLevelSelectSlot_3);
 
         ArrayAdapter TDollLevelAdapter = ArrayAdapter.createFromResource(this, R.array.tdoll_level,
                 android.R.layout.simple_spinner_dropdown_item);
-        TDollLevelSelect.setAdapter(TDollLevelAdapter);
-        TDollLevelSelect.setOnItemSelectedListener(this);
 
         ArrayAdapter LevelAdapter = ArrayAdapter.createFromResource(this, R.array.skill_level,
                 android.R.layout.simple_spinner_dropdown_item);
 
+        ArrayAdapter AffectionAdapter = ArrayAdapter.createFromResource(this, R.array.affection_level,
+                android.R.layout.simple_spinner_dropdown_item);
+
+        TDollLevelSelect.setAdapter(TDollLevelAdapter);
+        TDollLevelSelect.setOnItemSelectedListener(this);
+
         SkillLevelSelect.setAdapter(LevelAdapter);
         SkillLevelSelect.setOnItemSelectedListener(this);
+
+        AffectionSelect.setAdapter(AffectionAdapter);
+        AffectionSelect.setOnItemSelectedListener(this);
 
         EquipLevelSelectLevel_1.setAdapter(LevelAdapter);
         EquipLevelSelectLevel_1.setOnItemSelectedListener(this);
@@ -161,6 +170,24 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
 
         equipViews = new ImageView[]{findViewById(R.id.equipSlot_1), findViewById(R.id.equipSlot_2),
                                          findViewById(R.id.equipSlot_3)};
+
+        findViewById(R.id.equipSlot_1).setVisibility(View.GONE);
+        findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.GONE);
+        findViewById(R.id.removeEquipSlot_1).setVisibility(View.GONE);
+        findViewById(R.id.lockedSlot_1).setVisibility(View.VISIBLE);
+        ((TextView)findViewById(R.id.lockedSlot_1)).setText(getResources().getText(R.string.NA));
+
+        findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+        findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+        findViewById(R.id.removeEquipSlot_2).setVisibility(View.GONE);
+        findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+        ((TextView)findViewById(R.id.lockedSlot_2)).setText(getResources().getText(R.string.NA));
+
+        findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+        findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+        findViewById(R.id.removeEquipSlot_3).setVisibility(View.GONE);
+        findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+        ((TextView)findViewById(R.id.lockedSlot_3)).setText(getResources().getText(R.string.NA));
     }
 
     /**
@@ -233,8 +260,10 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.removeDoll_4:
             case R.id.removeDoll_5:
                 e.removeDoll(u.IDtoInt(v));
-                if(e.getDoll(selectedDoll - 1).getID() == 0)
+                if(e.getDoll(selectedDoll - 1).getID() == 0){
+                    updateUI();
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                }
                 else updateUI();
                 break;
             case R.id.pos_1:
@@ -246,6 +275,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             case R.id.pos_7:
             case R.id.pos_8:
             case R.id.pos_9:
+                updateUI();
                 displayStats(v);
                 displayDollTiles(v);
                 break;
@@ -257,6 +287,12 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     sf.setUp_EquipmentSelect(u.getAllEquipment(), UI.this, e.getDoll(selectedDoll - 1), u.IDtoInt(v) - 1, u);
                     sf.show(getSupportFragmentManager(), "test");
                 }
+                break;
+            case R.id.removeEquipSlot_1:
+            case R.id.removeEquipSlot_2:
+            case R.id.removeEquipSlot_3:
+                e.getDoll(selectedDoll - 1).removeEquipment(u.IDtoInt(v));
+                updateUI();
                 break;
         }
     }
@@ -290,26 +326,25 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
     }
 
     public void displayStats(View gridImageView) {
-        updateUI();
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
                 c.CalculateStats(e);
                 Stats[0].setText(doll.getName());
                 Stats[1].setText(String.valueOf(doll.getHp()));
-                Stats[2].setText(String.valueOf((int)Math.ceil(c.calcFP(doll))));
-                Stats[3].setText(String.valueOf((int)Math.ceil(c.calcAcc(doll))));
-                Stats[4].setText(String.valueOf((int)Math.ceil(c.calcEva(doll))));
-                Stats[5].setText(String.valueOf((int)Math.ceil(c.calcRof(doll))));
-                Stats[6].setText(String.valueOf((int)Math.ceil(c.calcCrit(doll))));
-                Stats[7].setText(String.valueOf((int)c.calcCritDmg(doll)));
-                Stats[8].setText(String.valueOf((int)c.calcRounds(doll)));
-                Stats[9].setText(String.valueOf((int)c.calcArmour(doll)));
-                Stats[10].setText(String.valueOf((int)c.calcAP(doll)));
-
+                Stats[2].setText(String.valueOf(c.getFP(doll)));
+                Stats[3].setText(String.valueOf(c.getAcc(doll)));
+                Stats[4].setText(String.valueOf(c.getEva(doll)));
+                Stats[5].setText(String.valueOf(c.getRof(doll)));
+                Stats[6].setText(String.valueOf(c.getCrit(doll)));
+                Stats[7].setText(String.valueOf(c.getCritDmg(doll)));
+                Stats[8].setText(String.valueOf(c.getRounds(doll)));
+                Stats[9].setText(String.valueOf(c.getArmour(doll)));
+                Stats[10].setText(String.valueOf(c.getAP(doll)));
 
                 selectedDoll = doll.getEchelonPosition();
                 TDollLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getLevel(), true));
                 SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkillLevel(), false));
+                AffectionSelect.setSelection(u.AffectionToSpinnerPosition(doll.getAffection()));
                 EquipLevelSelectLevel_1.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(0).getLevel(),false));
                 EquipLevelSelectLevel_2.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(1).getLevel(),false));
                 EquipLevelSelectLevel_3.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(2).getLevel(),false));
@@ -377,69 +412,105 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
         }
 
         //Set equipment selection based on T-Doll level
-        switch(e.getDoll(selectedDoll - 1).getLevel()){
-            case 1:
-            case 10:
-                findViewById(R.id.equipSlot_1).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_1).setVisibility(View.VISIBLE);
+        if(e.getDoll(selectedDoll - 1).getID() != 0){
+            ((TextView)findViewById(R.id.lockedSlot_1)).setText(getResources().getText(R.string.lv20unlock));
+            ((TextView)findViewById(R.id.lockedSlot_2)).setText(getResources().getText(R.string.lv80unlock));
+            ((TextView)findViewById(R.id.lockedSlot_3)).setText(getResources().getText(R.string.lv20unlock));
+            switch(e.getDoll(selectedDoll - 1).getLevel()){
+                case 1:
+                case 10:
+                    findViewById(R.id.equipSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_1).setVisibility(View.VISIBLE);
 
-                findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
 
-                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
-                break;
-            case 20:
-            case 30:
-            case 40:
-                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                    break;
+                case 20:
+                case 30:
+                case 40:
+                    findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
 
-                findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
 
-                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
-                break;
-            case 50:
-            case 60:
-            case 70:
-                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                    break;
+                case 50:
+                case 60:
+                case 70:
+                    findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
 
-                findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
 
-                findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
-                findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
-                break;
-            default:
-                findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
+                    findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.removeEquipSlot_3).setVisibility(View.GONE);
+                    findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    findViewById(R.id.equipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_1).setVisibility(View.GONE);
 
-                findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
+                    findViewById(R.id.equipSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_2).setVisibility(View.GONE);
 
-                findViewById(R.id.equipSlot_3).setVisibility(View.VISIBLE);
-                findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.VISIBLE);
-                findViewById(R.id.lockedSlot_3).setVisibility(View.GONE);
-                break;
+                    findViewById(R.id.equipSlot_3).setVisibility(View.VISIBLE);
+                    findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.VISIBLE);
+                    findViewById(R.id.removeEquipSlot_3).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lockedSlot_3).setVisibility(View.GONE);
+                    break;
+            }
+        }
+        else{
+            findViewById(R.id.equipSlot_1).setVisibility(View.GONE);
+            findViewById(R.id.equipLevelSelectSlot_1).setVisibility(View.GONE);
+            findViewById(R.id.removeEquipSlot_1).setVisibility(View.GONE);
+            findViewById(R.id.lockedSlot_1).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.lockedSlot_1)).setText(getResources().getText(R.string.NA));
+
+            findViewById(R.id.equipSlot_2).setVisibility(View.GONE);
+            findViewById(R.id.equipLevelSelectSlot_2).setVisibility(View.GONE);
+            findViewById(R.id.removeEquipSlot_2).setVisibility(View.GONE);
+            findViewById(R.id.lockedSlot_2).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.lockedSlot_2)).setText(getResources().getText(R.string.NA));
+
+            findViewById(R.id.equipSlot_3).setVisibility(View.GONE);
+            findViewById(R.id.equipLevelSelectSlot_3).setVisibility(View.GONE);
+            findViewById(R.id.removeEquipSlot_3).setVisibility(View.GONE);
+            findViewById(R.id.lockedSlot_3).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.lockedSlot_3)).setText(getResources().getText(R.string.NA));
         }
     }
 
     private void displayDollTiles(View gridImageView) {
-        updateUI();
+        //updateUI();
         for (Doll doll : e.getAllDolls()) {
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
                 int[] tiles = u.getDollTilesFormation(doll);
@@ -526,6 +597,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     v.setBackgroundColor(Color.TRANSPARENT);
                     v.setAlpha(1);
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                    updateUI();
                     break;
             }
 
@@ -544,6 +616,10 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     break;
                 case R.id.skill_level_select:
                     e.getDoll(selectedDoll - 1).setSkillLevel(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
+                    displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
+                    break;
+                case R.id.affection_select:
+                    e.getDoll(selectedDoll - 1).setAffection(((Spinner)findViewById(R.id.affection_select)).getSelectedItem().toString());
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
                 case R.id.equipLevelSelectSlot_1:
