@@ -4,80 +4,79 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Passive {
+import java.util.ArrayList;
+import java.util.List;
 
+public class Effect {
     private String type, target, name, trigger, modifySkill;
-    private int busyLinks, attacksLeft, tick, targets, fixedTime, maxStacks, stacks,
-            victories, stacksRequired, uses, hits, dollID;
+    private int busyLinks, attacksLeft, tick, targets, fixedTime, maxStacks, stacks, interval,
+            victories, hits;
     private float delay, radius, aoe_radius, aoe_multiplier;
-    private boolean stun, night, boss, requirements, sureCrit, refreshDuration, armoured, ignoreArmour,
-            piercing, stackable, canCrit, aoe, aoe_canCrit, aoe_sureCrit, triggerPythonPassive,
-            skill2Passive;
+    private boolean stun, night, boss, sureCrit, refreshDuration, armoured, ignoreArmour,
+            piercing, stackable, canCrit, aoe, aoe_canCrit, aoe_sureCrit, triggerPythonPassive, usable;
 
-    private int[] rounds, hitCount, fixedDamage, interval, armour, vulnerability, stacksToAdd, stackChance,
-            skillDamageBonus, ap, butterCream, extraCritDamage;
+    private List<String> requirements;
+    private int[] rounds, hitCount, fixedDamage, armour, vulnerability, stacksToAdd, stackChance,
+            skillDamageBonus, ap, butterCream;
     private float[] fp, acc, eva, rof, crit, critDmg, movespeed, duration, multiplier;
 
-    private Effect effect;
-    private Effect[] effects;
+    private Effect[] afterEffects;
+    private Effect effect_2;
 
-    float startTime;
-    int level;
+    //For use with 'BattleStats.java'. Gives the effect object the level of the passive object it is being used with
+    int level, dollID;
 
     //stat, after(another skillEffects class)
 
 
 
     //private String skillName_1, skillName_2, iconName_1, iconName_2, tooltipSkill_1, tooltipSkill_2,
-    //trigger, modeName;
+            //trigger, modeName;
 
-    Passive(JSONObject rawPassive){
+    Effect(JSONObject rawEffects){
         try {
-            JSONArray rawPassiveNames = rawPassive.names();
-            if (rawPassiveNames == null) return;
-            for (int i = 0; i < rawPassiveNames.length(); i++) {
-                switch (rawPassiveNames.getString(i)) {
-                    case "type": type = rawPassive.getString("type"); break;
-                    case "target": target = rawPassive.getString("target"); break;
-                    case "name": name = rawPassive.getString("name"); break;
-                    case "trigger": trigger = rawPassive.getString("trigger"); break;
-                    case "modifySkill;": modifySkill = rawPassive.getString("modifySkill"); break;
+            JSONArray rawEffectsNames = rawEffects.names();
+            if (rawEffectsNames == null) return;
+            for (int i = 0; i < rawEffectsNames.length(); i++) {
+                switch (rawEffectsNames.getString(i)) {
+                    case "type": type = rawEffects.getString("type"); break;
+                    case "target": target = rawEffects.getString("target"); break;
+                    case "name": name = rawEffects.getString("name"); break;
+                    case "trigger": trigger = rawEffects.getString("trigger"); break;
+                    case "modifySkill;": modifySkill = rawEffects.getString("modifySkill"); break;
 
-                    case "busyLinks": busyLinks = rawPassive.getInt("busylinks"); break;
-                    case "tick": tick = rawPassive.getInt("tick"); break;
-                    case "targets": targets = rawPassive.getInt("targets"); break;
-                    case "fixedTime": fixedTime = rawPassive.getInt("fixedTime"); break;
-                    case "maxStacks": maxStacks = rawPassive.getInt("maxStacks"); break;
-                    case "stacks": stacks = rawPassive.getInt("stacks"); break;
-                    case "stacksRequired": stacksRequired = rawPassive.getInt("stacksRequired"); break;
-                    case "attacksLeft": attacksLeft = rawPassive.getInt("attacksLeft"); break;
-                    case "victories": victories = rawPassive.getInt("victories"); break;
-                    case "hits": hits = rawPassive.getInt("hits"); break;
-                    case "uses": uses = rawPassive.getInt("uses"); break;
-                    case "dollid": dollID = rawPassive.getInt("dollid"); break;
+                    case "busyLinks": busyLinks = rawEffects.getInt("busylinks"); break;
+                    case "tick": tick = rawEffects.getInt("tick"); break;
+                    case "targets": targets = rawEffects.getInt("targets"); break;
+                    case "fixedTime": fixedTime = rawEffects.getInt("fixedTime"); break;
+                    case "maxStacks": maxStacks = rawEffects.getInt("maxStacks"); break;
+                    case "stacks": stacks = rawEffects.getInt("stacks"); break;
+                    case "attacksLeft": attacksLeft = rawEffects.getInt("attacksLeft"); break;
+                    case "interval": interval = rawEffects.getInt("interval"); break;
+                    case "victories": victories = rawEffects.getInt("victories"); break;
+                    case "hits": hits = rawEffects.getInt("hits"); break;
 
-                    case "delay": delay = (float) rawPassive.getDouble("delay"); break;
-                    case "radius": radius = (float) rawPassive.getDouble("radius"); break;
-                    case "aoe_radius": aoe_radius = (float) rawPassive.getDouble("aoe_radius"); break;
-                    case "aoe_multiplier": aoe_multiplier = (float) rawPassive.getDouble("aoe_multiplier"); break;
+                    case "delay": delay = (float) rawEffects.getDouble("delay"); break;
+                    case "radius": radius = (float) rawEffects.getDouble("radius"); break;
+                    case "aoe_radius": aoe_radius = (float) rawEffects.getDouble("aoe_radius"); break;
+                    case "aoe_multiplier": aoe_multiplier = (float) rawEffects.getDouble("aoe_multiplier"); break;
 
 
-                    case "stun": stun = rawPassive.getBoolean("stun"); break;
-                    case "sureCrit": sureCrit = rawPassive.getBoolean("sureCrit"); break;
-                    case "armored": armoured = rawPassive.getBoolean(("armored")); break;
-                    case "ignoreArmor": ignoreArmour = rawPassive.getBoolean("ignoreArmor"); break;
-                    case "piercing": piercing = rawPassive.getBoolean("piercing"); break;
-                    case "stackable": stackable = rawPassive.getBoolean("stackable"); break;
-                    case "refreshDuration": refreshDuration = rawPassive.getBoolean("refreshDuration"); break;
-                    case "canCrit": canCrit = rawPassive.getBoolean("canCrit"); break;
-                    case "aoe": aoe = rawPassive.getBoolean("aoe"); break;
-                    case "aoe_canCrit": aoe_canCrit = rawPassive.getBoolean("aoe_canCrit"); break;
-                    case "aoe_sureCrit": aoe_sureCrit = rawPassive.getBoolean("aoe_sureCrit"); break;
-                    case "triggerPythonPassive": triggerPythonPassive = rawPassive.getBoolean("triggerPythonPassive"); break;
-                    case "skill2passive": skill2Passive = rawPassive.getBoolean("skill2passive"); break;
+                    case "stun": stun = rawEffects.getBoolean("stun"); break;
+                    case "sureCrit": sureCrit = rawEffects.getBoolean("sureCrit"); break;
+                    case "armored": armoured = rawEffects.getBoolean(("armored")); break;
+                    case "ignoreArmor": ignoreArmour = rawEffects.getBoolean("ignoreArmor"); break;
+                    case "piercing": piercing = rawEffects.getBoolean("piercing"); break;
+                    case "stackable": stackable = rawEffects.getBoolean("stackable"); break;
+                    case "refreshDuration": refreshDuration = rawEffects.getBoolean("refreshDuration"); break;
+                    case "canCrit": canCrit = rawEffects.getBoolean("canCrit"); break;
+                    case "aoe": aoe = rawEffects.getBoolean("aoe"); break;
+                    case "aoe_canCrit": aoe_canCrit = rawEffects.getBoolean("aoe_canCrit"); break;
+                    case "aoe_sureCrit": aoe_sureCrit = rawEffects.getBoolean("aoe_sureCrit"); break;
+                    case "triggerPythonPassive": triggerPythonPassive = rawEffects.getBoolean("triggerPythonPassive"); break;
 
                     case "stat":
-                        JSONObject rawStat = rawPassive.getJSONObject("stat");
+                        JSONObject rawStat = rawEffects.getJSONObject("stat");
                         JSONArray names = rawStat.names();
                         if (names == null) break;
                         for (int index = 0; index < rawStat.length(); index++) {
@@ -91,7 +90,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        fp = new float[]{(float)rawPassive.getDouble("fp")};
+                                        fp = new float[]{(float)rawEffects.getDouble("fp")};
                                     }
                                     break;
                                 case "acc":
@@ -103,7 +102,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        acc = new float[]{(float)rawPassive.getDouble("acc")};
+                                        acc = new float[]{(float)rawEffects.getDouble("acc")};
                                     }
                                     break;
                                 case "eva":
@@ -115,7 +114,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        acc = new float[]{(float)rawPassive.getDouble("acc")};
+                                        acc = new float[]{(float)rawEffects.getDouble("acc")};
                                     }
                                     break;
                                 case "rof":
@@ -127,7 +126,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        rof = new float[]{(float)rawPassive.getDouble("rof")};
+                                        rof = new float[]{(float)rawEffects.getDouble("rof")};
                                     }
                                     break;
                                 case "crit":
@@ -139,7 +138,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        crit = new float[]{(float)rawPassive.getDouble("crit")};
+                                        crit = new float[]{(float)rawEffects.getDouble("crit")};
                                     }
                                     break;
                                 case "critdmg":
@@ -151,7 +150,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        critDmg = new float[]{(float)rawPassive.getDouble("critdmg")};
+                                        critDmg = new float[]{(float)rawEffects.getDouble("critdmg")};
                                     }
                                     break;
                                 case "movespeed":
@@ -163,7 +162,7 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        movespeed = new float[]{(float)rawPassive.getDouble("movespeed")};
+                                        movespeed = new float[]{(float)rawEffects.getDouble("movespeed")};
                                     }
                                     break;
                                 case "ap":
@@ -173,7 +172,7 @@ public class Passive {
                                         ap[stat] = ap_.getInt(stat);
                                     }*/
 
-                                    ap = new int[]{rawPassive.getInt("ap")};
+                                    ap = new int[]{rawEffects.getInt("ap")};
                                     break;
                                 case "armor":
                                     try {
@@ -184,121 +183,101 @@ public class Passive {
                                         }
                                     }
                                     catch (Exception e){
-                                        armour = new int[]{rawPassive.getInt("armor")};
+                                        armour = new int[]{rawEffects.getInt("armor")};
                                     }
                                     break;
                             }
                         }
                         break;
-                    case "effects":
-                        JSONArray rawEffects = rawPassive.getJSONArray("effects");
-                        effects = new Effect[rawEffects.length()];
-                        for(int ii = 0; ii < rawEffects.length(); ii++){
-                            effect = new Effect(rawEffects.getJSONObject(ii));
-                            effects[ii] = effect;
-                        }
+                    case "effect":
+                        JSONObject rawEffect = rawEffects.getJSONObject("effect");
+                        effect_2 = new Effect(rawEffect);
                         break;
-//                    case "after":
-//                        JSONObject rawAfter = rawPassive.getJSONObject("after");
-//                        afterEffect = new Passive(rawAfter);
-//                        break;
+                    case "after":
+                        try{
+                            JSONObject rawAfter = rawEffects.getJSONObject("after");
+                            afterEffects = new Effect[]{new Effect(rawAfter)};
+                        }catch (Exception e){
+                            JSONArray rawAfter = rawEffects.getJSONArray("after");
+                            for(int index = 0; index < rawAfter.length(); index++){
+                                afterEffects[index] = new Effect(rawAfter.getJSONObject(index));
+                            }
+                        }
+
+                        break;
                     case "buttercream":
-                        JSONArray rawButterCream = rawPassive.getJSONArray("buttercream");
+                        JSONArray rawButterCream = rawEffects.getJSONArray("buttercream");
                         butterCream = new int[rawButterCream.length()];
                         for (int index = 0; index < rawButterCream.length(); index++) {
                             butterCream[index] = rawButterCream.getInt(index);
                         }
                         break;
                     case "skillDamageBonus":
-                        JSONArray rawSkillDamageBonus = rawPassive.getJSONArray("skillDamageBonus");
+                        JSONArray rawSkillDamageBonus = rawEffects.getJSONArray("skillDamageBonus");
                         skillDamageBonus = new int[rawSkillDamageBonus.length()];
                         for (int index = 0; index < rawSkillDamageBonus.length(); index++) {
                             skillDamageBonus[index] = rawSkillDamageBonus.getInt(index);
                         }
                         break;
-                    case "extraCritDamage":
-                        try {
-                            JSONArray rawExtraCritDamage = rawPassive.getJSONArray("extraCritDamage");
-                            extraCritDamage = new int[rawExtraCritDamage.length()];
-                            for (int index = 0; index < rawExtraCritDamage.length(); index++) {
-                                extraCritDamage[index] = rawExtraCritDamage.getInt(index);
-                            }
-                        }
-                        catch (Exception e){
-                            vulnerability = new int[]{rawPassive.getInt("vulnerability")};
-                        }
-                        break;
                     case "vulnerability":
                         try {
-                            JSONArray rawVulnerability = rawPassive.getJSONArray("vulnerability");
+                            JSONArray rawVulnerability = rawEffects.getJSONArray("vulnerability");
                             vulnerability = new int[rawVulnerability.length()];
                             for (int index = 0; index < rawVulnerability.length(); index++) {
                                 vulnerability[index] = rawVulnerability.getInt(index);
                             }
                         }
                         catch (Exception e){
-                            vulnerability = new int[]{rawPassive.getInt("vulnerability")};
+                            vulnerability = new int[]{rawEffects.getInt("vulnerability")};
                         }
                         break;
                     case "hitCount":
-                        JSONArray rawHitCount = rawPassive.getJSONArray("hitCount");
+                        JSONArray rawHitCount = rawEffects.getJSONArray("hitCount");
                         hitCount = new int[rawHitCount.length()];
                         for (int index = 0; index < rawHitCount.length(); index++) {
                             hitCount[index] = rawHitCount.getInt(index);
                         }
                         break;
                     case "fixedDamage":
-                        JSONArray rawFixedDamage = rawPassive.getJSONArray("fixedDamage");
+                        JSONArray rawFixedDamage = rawEffects.getJSONArray("fixedDamage");
                         fixedDamage = new int[rawFixedDamage.length()];
                         for (int index = 0; index < rawFixedDamage.length(); index++) {
                             fixedDamage[index] = rawFixedDamage.getInt(index);
                         }
                         break;
                     case "rounds":
-                        JSONArray rawRounds = rawPassive.getJSONArray("rounds");
+                        JSONArray rawRounds = rawEffects.getJSONArray("rounds");
                         rounds = new int[rawRounds.length()];
                         for (int index = 0; index < rawRounds.length(); index++) {
                             rounds[index] = rawRounds.getInt(index);
                         }
                         break;
-                    case "interval":
-                        try {
-                            JSONArray rawInterval = rawPassive.getJSONArray("multiplier");
-                            interval = new int[rawInterval.length()];
-                            for (int index = 0; index < rawInterval.length(); index++) {
-                                interval[index] = rawInterval.getInt(index);
-                            }
-                        }
-                        catch (Exception e){
-                            interval = new int[]{rawPassive.getInt("interval")};
-                        }
-                        break;
                     case "multiplier":
                         try {
-                            JSONArray rawMultiplier = rawPassive.getJSONArray("multiplier");
+                            JSONArray rawMultiplier = rawEffects.getJSONArray("multiplier");
                             multiplier = new float[rawMultiplier.length()];
                             for (int index = 0; index < rawMultiplier.length(); index++) {
                                 multiplier[index] = (float) rawMultiplier.getDouble(index);
                             }
                         }
                         catch (Exception e){
-                            multiplier = new float[]{rawPassive.getInt("multiplier")};
+                            multiplier = new float[]{rawEffects.getInt("multiplier")};
                         }
                         break;
                     case "stacksToAdd":
                         try {
-                            JSONArray rawStacksToAdd = rawPassive.getJSONArray("stacksToAdd");
+                            JSONArray rawStacksToAdd = rawEffects.getJSONArray("stacksToAdd");
                             stacksToAdd = new int[rawStacksToAdd.length()];
                             for (int index = 0; index < rawStacksToAdd.length(); index++) {
                                 stacksToAdd[index] = rawStacksToAdd.getInt(index);
                             }
                         }
                         catch (Exception e){
-                            stacksToAdd = new int[]{rawPassive.getInt("stacksToAdd")};
+                            stacksToAdd = new int[]{rawEffects.getInt("stacksToAdd")};
                         }
                         break;
                     case "stackChance":
-                        JSONArray rawStackChance = rawPassive.getJSONArray("stackChance");
+                        JSONArray rawStackChance = rawEffects.getJSONArray("stackChance");
                         stackChance = new int[rawStackChance.length()];
                         for (int index = 0; index < rawStackChance.length(); index++) {
                             stackChance[index] = rawStackChance.getInt(index);
@@ -306,104 +285,104 @@ public class Passive {
                         break;
                     case "duration":
                         try {
-                            JSONArray rawDuration = rawPassive.getJSONArray("duration");
+                            JSONArray rawDuration = rawEffects.getJSONArray("duration");
                             duration = new float[rawDuration.length()];
                             for (int index = 0; index < rawDuration.length(); index++) {
                                 duration[index] = (float) rawDuration.getDouble(index);
                             }
                         }
                         catch (Exception e){
-                            duration = new float[]{rawPassive.getInt("duration")};
+                            duration = new float[]{rawEffects.getInt("duration")};
                         }
                         break;
                     case "requirements":
-                        JSONObject rawRequirements = rawPassive.getJSONObject("requirements");
-                        requirements = true;
-
-                        night = rawRequirements.has("night") && rawRequirements.getBoolean("night");
-                        boss = rawRequirements.has("boss") && rawRequirements.getBoolean("boss");
+                        JSONObject rawRequirements = rawEffects.getJSONObject("requirements");
+                        requirements = new ArrayList<>();
+                        if(rawRequirements.has("night")){
+                            night = rawRequirements.getBoolean("night");
+                            requirements.add("night");
+                        }
+                        if(rawRequirements.has("boss")){
+                            boss = rawRequirements.getBoolean("boss");
+                            requirements.add("boss");
+                        }
+                        if(rawRequirements.has("armored")){
+                            armoured = rawRequirements.getBoolean("armored");
+                            requirements.add("armored");
+                        }
                 }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            }
+        catch (JSONException e) {
+                e.printStackTrace();
+            }
     }
-    Passive(Passive passive){
-        //Strings
-        this.type = getType();
-        this.target = getTarget();
-        this.name = getName();
-        this.trigger = getTrigger();
-        this.modifySkill = getModifySkill();
+    Effect(Effect effect){
+        this.type = effect.getType();
+        this.target = effect.getTarget();
+        this.name = effect.getName();
+        this.trigger = effect.getTrigger();
+        this.modifySkill = effect.getModifySkill();
 
-        //ints
-        this.busyLinks = getBusyLinks();
-        this.attacksLeft = getAttacksLeft();
-        this.tick = getTick();
-        this.targets = getTargets();
-        this.fixedTime = getFixedTime();
-        this.maxStacks = getMaxStacks();
-        this.stacks = getStacks();
-        this.victories = getVictories();
-        this.stacksRequired = getStacksRequired();
-        this.uses = getUses();
-        this.hits = getHits();
-        this.dollID = getDollID();
+        this.busyLinks = effect.getBusyLinks();
+        this.attacksLeft = effect.getAttacksLeft();
+        this.tick = effect.getTick();
+        this.targets = effect.getTargets();
+        this.fixedTime = effect.getFixedTime();
+        this.maxStacks = effect.getMaxStacks();
+        this.stacks = effect.getStacks();
+        this.interval = effect.getInterval();
+        this.victories = effect.getVictories();
+        this.hits = effect.getHits();
 
-        //floats
-        this.delay = getDelay();
-        this.radius = getRadius();
-        this.aoe_radius = getAoe_radius();
-        this.aoe_multiplier = getAoe_multiplier();
+        this.delay = effect.getDelay();
+        this.radius = effect.getRadius();
+        this.aoe_radius = effect.getAoe_radius();
+        this.aoe_multiplier = effect.getAoe_multiplier();
 
-        //booleans
-        this.stun = isStun();
-        this.night = isNight();
-        this.boss = isBoss();
-        this.requirements = isRequirements();
-        this.sureCrit = isSureCrit();
-        this.refreshDuration = isRefreshDuration();
-        this.armoured = isArmoured();
-        this.ignoreArmour = isIgnoreArmour();
-        this.piercing = isPiercing();
-        this.stackable =  isStackable();
-        this.canCrit = isCanCrit();
-        this.aoe = isAoe();
-        this.aoe_canCrit = isAoe_canCrit();
-        this.aoe_sureCrit = isAoe_sureCrit();
-        this.triggerPythonPassive = isTriggerPythonPassive();
-        this.skill2Passive = isSkill2Passive();
+        this.stun = effect.isStun();
+        this.night = effect.isNight();
+        this.boss = effect.isBoss();
+        this.sureCrit = effect.isSureCrit();
+        this.refreshDuration = effect.isRefreshDuration();
+        this.armoured = effect.isArmoured();
+        this.ignoreArmour = effect.isIgnoreArmour();
+        this.piercing = effect.isPiercing();
+        this.stackable = effect.isStackable();
+        this.canCrit = effect.isCanCrit();
+        this.aoe = effect.isAoe();
+        this.aoe_canCrit = effect.isAoe_canCrit();
+        this.aoe_sureCrit = effect.isAoe_sureCrit();
+        this.triggerPythonPassive = effect.isTriggerPythonPassive();
+        this.usable = effect.isUsable();
 
-        //int arrays
-        this.rounds = getRounds();
-        this.hitCount = getHitCount();
-        this.fixedDamage = getFixedDamage();
-        this.interval = getInterval();
-        this.armour = getArmour();
-        this.vulnerability = getVulnerability();
-        this.stacksToAdd = getStacksToAdd();
-        this.stackChance = getStackChance();
-        this.skillDamageBonus = getSkillDamageBonus();
-        this.ap = getAp();
-        this.butterCream = getButterCream();
-        this.extraCritDamage = getExtraCritDamage();
+        this.requirements = effect.getRequirements();
 
-        //float arrays
-        this.fp = getFp();
-        this.acc = getAcc();
-        this.eva = getEva();
-        this.rof = getRof();
-        this.crit = getCrit();
-        this.critDmg = getCritDmg();
-        this.movespeed = getMovespeed();
-        this.duration = getDuration();
-        this.multiplier = getMultiplier();
+        this.rounds = effect.getRounds();
+        this.hitCount = effect.getHitCount();
+        this.fixedDamage = effect.getFixedDamage();
+        this.armour = effect.getArmour();
+        this.vulnerability = effect.getVulnerability();
+        this.stacksToAdd = effect.getStacksToAdd();
+        this.stackChance = effect.getStackChance();
+        this.skillDamageBonus = effect.getSkillDamageBonus();
+        this.ap = effect.getAp();
+        this.butterCream = effect.getButterCream();
 
-        //this.effect
-        this.effects = getEffects();
-    }
-    Passive(){
+        this.fp = effect.getFp();
+        this.acc = effect.getAcc();
+        this.eva = effect.getEva();
+        this.rof = effect.getRof();
+        this.crit = effect.getCrit();
+        this.critDmg = effect.getCritDmg();
+        this.movespeed = effect.getMovespeed();
+        this.duration = effect.getDuration();
+        this.multiplier = effect.getMultiplier();
 
+        this.afterEffects = effect.getAfterEffects();
+        this.effect_2 = effect.getEffect_2();
+
+        this.level = effect.level;
     }
 
     public String getType(){
@@ -412,6 +391,11 @@ public class Passive {
     public String getTarget(){
         return target;
     }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
     public String getName(){
         return name;
     }
@@ -440,23 +424,20 @@ public class Passive {
     public int getMaxStacks() {
         return maxStacks;
     }
+    public void setStacks(int stacks) {
+        this.stacks = stacks;
+    }
     public int getStacks() {
         return stacks;
     }
-    public int getStacksRequired() {
-        return stacksRequired;
+    public int getInterval() {
+        return interval;
     }
     public int getVictories() {
         return victories;
     }
     public int getHits() {
         return hits;
-    }
-    public int getUses() {
-        return uses;
-    }
-    public int getDollID() {
-        return dollID;
     }
 
     public float getDelay() {
@@ -480,9 +461,6 @@ public class Passive {
     }
     public boolean isBoss() {
         return boss;
-    }
-    public boolean isRequirements() {
-        return requirements;
     }
     public boolean isSureCrit() {
         return sureCrit;
@@ -517,8 +495,16 @@ public class Passive {
     public boolean isTriggerPythonPassive() {
         return triggerPythonPassive;
     }
-    public boolean isSkill2Passive() {
-        return skill2Passive;
+
+    public void setUsable(boolean usable){
+        this.usable = usable;
+    }
+    public boolean isUsable() {
+        return usable;
+    }
+
+    public List<String> getRequirements() {
+        return requirements;
     }
 
     public int[] getRounds(){
@@ -530,9 +516,6 @@ public class Passive {
     public int[] getFixedDamage(){
         return fixedDamage;
     }
-    public int[] getInterval() {
-        return interval;
-    }
     public int[] getArmour(){
         return armour;
     }
@@ -541,6 +524,9 @@ public class Passive {
     }
     public int[] getStacksToAdd(){
         return stacksToAdd;
+    }
+    public void setStacksToAdd(int[] stacksToAdd) {
+        this.stacksToAdd = stacksToAdd;
     }
     public int[] getStackChance(){
         return stackChance;
@@ -554,21 +540,27 @@ public class Passive {
     public int[] getButterCream(){
         return butterCream;
     }
-    public int[] getExtraCritDamage() {
-        return extraCritDamage;
-    }
 
     public float[] getFp(){
         return fp;
     }
+    public void setFp(float[] fp) {
+        this.fp = fp;
+    }
     public float[] getAcc(){
         return acc;
+    }
+    public void setAcc(float[] acc) {
+        this.acc = acc;
     }
     public float[] getEva(){
         return eva;
     }
     public float[] getRof(){
         return rof;
+    }
+    public void setRof(float[] rof) {
+        this.rof = rof;
     }
     public float[] getCrit(){
         return crit;
@@ -582,19 +574,20 @@ public class Passive {
     public float[] getDuration(){
         return duration;
     }
+    public void setDuration(float[] duration) {
+        this.duration = duration;
+    }
     public float[] getMultiplier(){
         return multiplier;
     }
-
-//    public Passive getAfterEffect() {
-//        return afterEffect;
-//    }
-
-    public void setEffects(Effect[] effects) {
-        this.effects = effects;
+    public void setMultiplier(float[] multiplier){
+        this.multiplier = multiplier;
     }
 
-    public Effect[] getEffects() {
-        return effects;
+    public Effect[] getAfterEffects() {
+        return afterEffects;
+    }
+    public Effect getEffect_2() {
+        return effect_2;
     }
 }

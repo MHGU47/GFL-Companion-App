@@ -864,4 +864,55 @@ public class Utils {
 //            }
 //        }
     }
+
+    public float getCapRof(Doll doll, float preBattleRof){
+        preBattleRof = (float) Math.floor(preBattleRof);
+        int cap;
+        if(doll.getType() == 6) cap = 60;
+        else if (doll.getType() == 5) return (int) Math.floor(Math.min(1000, Math.max(1, doll.getRof())));
+        else cap = 120;
+
+        float cap_ = Math.min(getEffectiveRof(cap), getEffectiveRof(preBattleRof));
+        return (float) Math.floor(Math.min(cap_, Math.max(15, preBattleRof)));
+    }
+
+    public float getCapCrit(float preBattleCrit){
+        return Math.min(100, Math.max(0, preBattleCrit));
+    }
+
+    public float getFrames(float originalRof){
+        return (float) Math.floor(1500 / originalRof);
+    }
+
+    public float getEffectiveRof(float originalRof){
+        float frames = getFrames(originalRof);
+        return (float) Math.ceil(1500 / (frames + 0.9999));
+    }
+
+    public Effect[] getUsableSkillEffects(Effect[] effects){
+        Effect[] temp = new Effect[effects.length];
+
+        for(int i = 0; i < temp.length; i++){
+            if(effects[i].getRequirements() == null){
+                temp[i] = effects[i];
+                continue;
+            }
+            boolean valid = true;
+            for (String condition : effects[i].getRequirements()) {
+                switch (condition) {
+                    case "night":
+                        valid = valid && (/*isNight == */effects[i].isNight());
+                        break;
+                    case "armored":
+                        valid = valid && (/*enemyArmor > 0 == */effects[i].isArmoured());
+                        break;
+                    case "boss":
+                        valid = valid && (/*isBoss == */effects[i].isBoss());
+                        break;
+                }
+            }
+            if(valid) temp[i] = effects[i];
+        }
+        return temp;
+    }
 }

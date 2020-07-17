@@ -14,7 +14,7 @@ public class Doll {
 
     private int id, id_index, spritesheet_row, spritesheet_col, rarity, type, hp, fp, acc, eva, rof, crit,
             critdmg, ap, rounds, armour, framesPerAttack, growth_rating, construct_time, gridPosition,
-            echelonPosition, level, skillLevel;
+            echelonPosition, level, skill_1Level, skill_2Level;
     
     private int simFp, simAcc, simEva, simRof, simCrit, simCritDmg, simAp, simRounds, simCurrentRounds,
             simArmour, totalShots, hits, misses, targets, busyLinks, skillDamage, numOfAttacks;
@@ -24,11 +24,11 @@ public class Doll {
     private JSONArray aliases;
 
     private String api_name, name, artist, voice, name_skill_1, icon_name_skill_1, tooltip_skill_1,
-            tooltip_skill_2, tooltip_tiles, image;
+            tooltip_skill_2, tooltip_tiles, image, name_skill_2, icon_name_skill_2;
 
-    private Boolean mod, en_craftable, en_released;
+    private Boolean mod, en_craftable, en_released, skill_control, slug;
 
-    private JSONObject rawSkill, tiles;
+    private JSONObject rawSkill_1, rawSkill_2, tiles;
 
     private ImageView gridPosition_imageview;
 
@@ -38,15 +38,18 @@ public class Doll {
 
     private Equipment[] equipment;
 
-    private Timer normalAttackTimer, skillTimer;
+    private Timer normalAttackTimer, skillTimer;//TODO: Remove these, they're referenced in 'BS' now
 
     private Vector<Object> actionQueue, effectQueue;
 
-    private Skill skill;
+    private Skill skill_1, skill_2;
 
     private List<Buff> buffs;
 
-    private List<Passive> passives;
+    //private List<Passive> passives;
+    private Passive[] passives;
+
+    private BattleStats bs;
 
     /**
      * Pass in the data in the form of a JSONObject so the data can be extracted properly.
@@ -91,9 +94,27 @@ public class Doll {
             name_skill_1 = (String) DollData.get("name_skill1");
             icon_name_skill_1 = (String) DollData.get("icon_name_skill1");
             tooltip_skill_1 = (String) DollData.get("tooltip_skill1");
-            rawSkill = (JSONObject) DollData.get("skill");
-            skillLevel = 1;
-            tooltip_skill_2 = (String) DollData.get("tooltip_skill2");
+            rawSkill_1 = (JSONObject) DollData.get("skill");
+            try {
+                rawSkill_2 = (JSONObject) DollData.get("skill2");
+                name_skill_2= DollData.getString("name_skill2");
+                icon_name_skill_2 = DollData.getString("icon_name_skill2");
+                tooltip_skill_2 = (String) DollData.get("tooltip_skill2");
+            }
+            catch (JSONException e){
+                rawSkill_2 = null;
+                name_skill_2= null;
+                icon_name_skill_2 = null;
+                tooltip_skill_2 = null;
+            }
+            skill_1Level = 1;
+            skill_2Level = 1;
+            try{
+                skill_control = DollData.getBoolean("skill_control");
+            }
+            catch(Exception e){
+                skill_control = null;
+            }
             tooltip_tiles = (String) DollData.get("tooltip_tiles");
             tiles = (JSONObject) DollData.get("tiles");
             gridPosition = 0;
@@ -107,33 +128,46 @@ public class Doll {
             affection = 0;
             image = "doll_" + DollData.get("id");
             
-            simAcc = 0;
-            simAp = 0;
-            simArmour = 0;
-            simCooldown = 0;
-            simCrit = 0;
-            simCritDmg = 0;
-            simEva = 0;
-            simFp = 0;
-            simRof = 0;
-            simRounds = 0;
-            simCurrentRounds = 0;
-            totalShots = 0;
-            misses = 0;
-            hits = 0;
-            shots = new ArrayList<>();
-            targets = 0;
-            busyLinks = 0;
-            skillDamage = 0;
-            numOfAttacks = 0;
-            normalAttackTimer = new Timer("normal attack",0);
-            skillTimer = new Timer("skill", 0);
-            actionQueue = new Vector<Object>();
-            effectQueue = new Vector<Object>();
-            skill = new Skill(name_skill_1, icon_name_skill_1, tooltip_skill_1, tooltip_skill_2, rawSkill);
+            //simAcc = 0;
+            //simAp = 0;
+            //simArmour = 0;
+            //simCooldown = 0;
+            //simCrit = 0;
+            //simCritDmg = 0;
+            //simEva = 0;
+            //simFp = 0;
+            //simRof = 0;
+            //simRounds = 0;
+            //simCurrentRounds = 0;
+            //totalShots = 0;
+            //misses = 0;
+            //hits = 0;
+            //shots = new ArrayList<>();
+            //targets = 0;
+            //busyLinks = 0;
+            //skillDamage = 0;
+            //numOfAttacks = 0;
+            //normalAttackTimer = new Timer("normal attack",0);
+            //skillTimer = new Timer("skill", 0);
+            //actionQueue = new Vector<Object>();
+            //effectQueue = new Vector<Object>();
+
+            skill_1 = new Skill(name_skill_1, icon_name_skill_1, tooltip_skill_1, rawSkill_1);
             //TODO: Rewrite how these are passed in. Use an array to hold everything except 'rawSkill'
+            skill_2 = new Skill(name_skill_2, icon_name_skill_2, tooltip_skill_2, rawSkill_2);
             buffs = new ArrayList<>();
-            passives = new ArrayList<>();
+            //passives = new ArrayList<>();
+            try{
+                JSONArray temp = DollData.getJSONArray("passives");
+                passives = new Passive[temp.length()];
+                for(int i = 0; i < temp.length(); i++){
+                    passives[i] = new Passive(temp.getJSONObject(i));
+                }
+            }
+            catch (Exception e){
+                passives = null;
+            }
+
         }
         catch (JSONException e){
             setNull();
@@ -163,7 +197,8 @@ public class Doll {
         this.gridPosition = newDoll.getGridPosition();
         this.echelonPosition = newDoll.getEchelonPosition();
         this.level = newDoll.getLevel();
-        this.skillLevel = newDoll.getSkillLevel();
+        this.skill_1Level = newDoll.getSkill_1Level();
+        this.skill_2Level = newDoll.getSkill_2Level();
         this.affection = newDoll.getAffection();
         this.aliases = newDoll.getAliases();
         this.api_name = newDoll.getApi_name();
@@ -171,16 +206,21 @@ public class Doll {
         this.artist = newDoll.getArtist();
         this.voice = newDoll.getVoice();
         this.name_skill_1 = newDoll.getName_skill_1();
+        this.name_skill_2 = newDoll.getName_skill_2();
         this.icon_name_skill_1 = newDoll.getIcon_name_skill_1();
+        this.icon_name_skill_2 = newDoll.getIcon_name_skill_2();
         this.tooltip_skill_1 = newDoll.getTooltip_skill_1();
         this.tooltip_skill_2 = newDoll.getTooltip_skill_2();
         this.tooltip_tiles = newDoll.getTooltip_tiles();
         this.image = newDoll.getImage();
-        this.mod = newDoll.getMod();
-        this.en_craftable = newDoll.getEn_craftable();
-        this.en_released = newDoll.getEn_released();
-        this.rawSkill = newDoll.getRawSkill();
-        this.skill = newDoll.getSkill();
+        this.mod = newDoll.isMod();
+        this.en_craftable = newDoll.isEn_craftable();
+        this.en_released = newDoll.isEn_released();
+        this.rawSkill_1 = newDoll.getRawSkill_1();
+        this.rawSkill_2 = newDoll.getRawSkill_2();
+        this.skill_1 = newDoll.getSkill_1();
+        this.skill_2 = newDoll.getSkill_2();
+        this.skill_control = newDoll.getSkill_control();
         this.tiles = newDoll.getRawTiles();
         this.gridPosition_imageview = newDoll.getGridImageView();
         this.tilesFormation = newDoll.getTilesFormation();
@@ -188,32 +228,35 @@ public class Doll {
         this.receivedTileBuffs = newDoll.getReceivedTileBuffs();
         this.equipmentBuffs = newDoll.getEquipmentBuffs();
         this.equipment = newDoll.getAllEquipment();
-        
-        this.simRounds = 0;
-        this.simCurrentRounds = 0;
-        this.simRof = 0;
-        this.simFp = 0;
-        this.simEva = 0;
-        this.simCritDmg = 0;
-        this.simCrit = 0;
-        this.simArmour = 0;
-        this.simAp = 0;
-        this.simAcc = 0;
-        this.simCooldown = 0;
-        this.totalShots = 0;
-        this.misses = 0;
-        this.hits = 0;
-        this.shots = new ArrayList<>();
-        this.targets = 0;
-        this.busyLinks = 0;
-        this.skillDamage = 0;
-        this.numOfAttacks = 0;
-        this.normalAttackTimer = new Timer("normal attack",0);
-        this.skillTimer = new Timer("skill", 0);
-        this.actionQueue = new Vector<Object>();
-        this.effectQueue = new Vector<Object>();
+        this.slug = newDoll.hasSlug();
+
+        //this.simRounds = 0;
+        //this.simCurrentRounds = 0;
+        //this.simRof = 0;
+        //this.simFp = 0;
+        //this.simEva = 0;
+        //this.simCritDmg = 0;
+        //this.simCrit = 0;
+        //this.simArmour = 0;
+        //this.simAp = 0;
+        //this.simAcc = 0;
+        //this.simCooldown = 0;
+        //this.totalShots = 0;
+        //this.misses = 0;
+        //this.hits = 0;
+        //this.shots = new ArrayList<>();
+        //this.targets = 0;
+        //this.busyLinks = 0;
+        //this.skillDamage = 0;
+        //this.numOfAttacks = 0;
+        //this.normalAttackTimer = new Timer("normal attack",0);
+        //this.skillTimer = new Timer("skill", 0);
+        //this.actionQueue = new Vector<Object>();
+        //this.effectQueue = new Vector<Object>();
         this.buffs = getBuffs();
-        this.passives = getPassives();
+        //this.passives = getPassives();
+        this.passives = newDoll.getPassives();
+        this.bs = null;
     }
 
     Doll(){
@@ -253,8 +296,13 @@ public class Doll {
         name_skill_1 = "";
         icon_name_skill_1 = "";
         tooltip_skill_1 = "";
-        rawSkill = null;
-        skillLevel = 0;
+        rawSkill_1 = null;
+        rawSkill_2 = null;
+        skill_1Level = 0;
+        skill_2Level = 0;
+        name_skill_2 = "";
+        icon_name_skill_2 = "";
+        skill_control = null;
         tooltip_skill_2 = "";
         tooltip_tiles = "";
         tiles = null;
@@ -265,31 +313,35 @@ public class Doll {
         receivedTileBuffs = null;
         equipmentBuffs = null;
         equipment = null;
-        simRounds = 0;
-        simCurrentRounds = 0;
-        simRof = 0;
-        simFp = 0;
-        simEva = 0;
-        simCritDmg = 0;
-        simCrit = 0;
-        simArmour = 0;
-        simAp = 0;
-        simAcc = 0;
-        simCooldown = 0;
-        totalShots = 0;
-        misses = 0;
-        hits = 0;
-        shots = null;
-        targets = 0;
-        busyLinks = 0;
-        skillDamage = 0;
-        numOfAttacks = 0;
-        normalAttackTimer = null;
-        skillTimer = null;
-        actionQueue = null;
-        skill = null;
+
+        //simRounds = 0;
+        //simCurrentRounds = 0;
+        //simRof = 0;
+        //simFp = 0;
+        //simEva = 0;
+        //simCritDmg = 0;
+        //simCrit = 0;
+        //simArmour = 0;
+        //simAp = 0;
+        //simAcc = 0;
+        //simCooldown = 0;
+        //totalShots = 0;
+        //misses = 0;
+        //hits = 0;
+        //shots = null;
+        //targets = 0;
+        //busyLinks = 0;
+        //skillDamage = 0;
+        //numOfAttacks = 0;
+        //normalAttackTimer = null;
+        //skillTimer = null;
+        //actionQueue = null;
+        skill_1 = null;
+        skill_2 = null;
         buffs = null;
+        //passives = null;
         passives = null;
+        bs = null;
     }
 
     public int getID() {
@@ -319,11 +371,18 @@ public class Doll {
         return level;
     }
 
-    public void setSkillLevel(int skillLevel) {
-        this.skillLevel = skillLevel;
+    public void setSkill_1Level(int skillLevel) {
+        this.skill_1Level = skillLevel;
     }
-    public int getSkillLevel() {
-        return skillLevel;
+    public int getSkill_1Level() {
+        return skill_2Level;
+    }
+
+    public void setSkill_2Level(int skillLevel) {
+        this.skill_2Level = skillLevel;
+    }
+    public int getSkill_2Level() {
+        return skill_2Level;
     }
 
     public void setAffection(String affection){
@@ -459,8 +518,16 @@ public class Doll {
         return name_skill_1;
     }
 
+    public String getName_skill_2() {
+        return name_skill_2;
+    }
+
     public String getIcon_name_skill_1() {
         return icon_name_skill_1;
+    }
+
+    public String getIcon_name_skill_2() {
+        return icon_name_skill_2;
     }
 
     public String getTooltip_skill_1() {
@@ -475,24 +542,36 @@ public class Doll {
         return tooltip_tiles;
     }
 
-    public Boolean getMod() {
+    public Boolean isMod() {
         return mod;
     }
 
-    public Boolean getEn_craftable() {
+    public Boolean isEn_craftable() {
         return en_craftable;
     }
 
-    public Boolean getEn_released() {
+    public Boolean isEn_released() {
         return en_released;
     }
 
-    public JSONObject getRawSkill() {
-        return rawSkill;
+    public JSONObject getRawSkill_1() {
+        return rawSkill_1;
     }
 
-    public Skill getSkill(){
-        return skill;
+    public JSONObject getRawSkill_2() {
+        return rawSkill_2;
+    }
+
+    public Skill getSkill_1(){
+        return skill_1;
+    }
+
+    public Skill getSkill_2(){
+        return skill_2;
+    }
+
+    public Boolean getSkill_control() {
+        return skill_control;
     }
 
     public JSONObject getRawTiles() {
@@ -534,6 +613,7 @@ public class Doll {
 
     public void setEquipment(Equipment equip, int slot){
         equipment[slot - 1] = new Equipment(equip);
+        slug = equip.getType() == 7;
     }
 
     public void removeEquipment(int slot){
@@ -542,12 +622,14 @@ public class Doll {
                 case 1:
                 case 10:
                     equipment = new Equipment[]{new Equipment(), new Equipment(), new Equipment()};
+                    slug = false;
                     break;
                 case 20:
                 case 30:
                 case 40:
                     equipment[1] = new Equipment();
                     equipment[2] = new Equipment();
+                    slug = false;
                     break;
                 case 50:
                 case 60:
@@ -559,6 +641,7 @@ public class Doll {
             }
         }
         else equipment[slot - 1] = new Equipment();
+        slug = slug && slot != 2;
     }
 
     public Equipment[] getAllEquipment(){
@@ -591,6 +674,10 @@ public class Doll {
             case "nightview": return (float)equipmentBuffs[9];
             default: return (float)equipmentBuffs[10];
         }
+    }
+
+    public Boolean hasSlug() {
+        return slug;
     }
 
     //Tiles
@@ -630,7 +717,11 @@ public class Doll {
     
     //Simulation Setters/Getters
 
-    public void setSimFp(int simFp) {
+    public void setBattleStats(List<Integer> stats){
+        bs = new BattleStats(this, stats);
+    }
+
+    /*public void setSimFp(int simFp) {
         this.simFp = simFp;
     }
     public int getSimFp() {
@@ -698,7 +789,7 @@ public class Doll {
     }
     public int getSimArmour() {
         return simArmour;
-    }
+    }*/
 
     public void setCooldown(float simCooldown) {
         this.simCooldown = 1 - (simCooldown / 100);
@@ -707,7 +798,7 @@ public class Doll {
         return simCooldown;
     }
 
-    public void setHits(int hits){
+    /*public void setHits(int hits){
         this.hits = hits;
     }
 
@@ -725,7 +816,7 @@ public class Doll {
         shots.add(totalShots);
 
         return shots;
-    }
+    }*/
 
     public void setTargets(int targets) {
         this.targets = targets;
@@ -734,7 +825,7 @@ public class Doll {
         return targets;
     }
 
-    public void setBusyLinks(int busyLinks) {
+    /*public void setBusyLinks(int busyLinks) {
         this.busyLinks = busyLinks;
     }
     public int getBusyLinks() {
@@ -801,7 +892,7 @@ public class Doll {
 
     public Vector<Object> getEffectQueue(){
         return effectQueue;
-    }
+    }*/
 
     public void addBuff(Buff buff){
         buffs.add(buff);
@@ -811,15 +902,21 @@ public class Doll {
         return buffs;
     }
 
-    public void addPassive(Passive passive){
-        passives.add(passive);
-    }
+//    public void addPassive(Passive passive){
+//        passives.add(passive);
+//    }
+//
+//    public List<Passive> getPassives(){
+//        return passives;
+//    }
 
-    public List<Passive> getPassives(){
+    public Passive[] getPassives() {
         return passives;
     }
 
-
+    public BattleStats getBS(){
+        return bs;
+    }
 
 
 //    if ('passives' in doll) {

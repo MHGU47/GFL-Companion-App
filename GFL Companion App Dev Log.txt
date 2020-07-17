@@ -467,9 +467,53 @@
 04/07/2020
 -Started filling out 'Skill.java' to accommodate for all skills
 
+05/07/2020
+-Created new class 'SkillEffect.java'; this class will be used to hold the effects, and after effects,
+ of skills. A class is needed as the method that was being used previously was becoming far to complex
+ to justify not using a class.
+
+06/07/2020
+-Finished implementing 'Effect.java'; 'Effect' objects can be created successfully and they
+ are able to create extra 'Effect' objects within themselves. This allows skills like
+ 'Incendiary Grenade' and 'Chain Shot' to be stored properly. It can also be used with 'Passive.java'.
+-Reworked 'Passive.java' class; this works in the same way as 'Effect.java'
+
+07/07/2020
+-Added new class 'BattleStats.java'; this will be used to hold the stats that will constantly be
+ altered due to the T-Doll being in battle.
+-Removed all previously added variables used for battle stats and added a 'BattleStats' variable to
+ 'Doll.java'.
+-Created new function 'GetStats(Doll)' in 'Calculation.java'; this is to make getting the stats simpler
+ as they're needed for more than just displaying them onto the UI.
+-Added new class 'Shots.java'; this is to keep track of the shots fired by the T-Doll
+-Added new function 'getPreBattleStat(String)' in 'BattleStats.java'; this is to get specific stats
+ if needed.
+-Added new function 'getPreBattleStats()' in 'BattleStats.java'; this returns all the pre-battle stats
+-Added getters and setters in 'BattleStats.java' for retrieving the values in 'Shots.java'.
+-Added copy constructor to 'Skill.java'; this is so a copy of the T-Dolls skill can be used by 'BattleStats'
+
+08/07/2020
+-Added new functions to 'Utils.java'; 'getCapCrit(float)', 'getCapRof(Doll, float)', 'getFrames(float)'
+ and 'getEffective(float)' were added. Their uses are self-explanatory.
+-Added copy constructor to 'Passive.java'; this is so a copy of the T-Dolls passive can be used by
+ 'BattleStats'.
+-Finished making versions of the pre-battle and in-battle stats and how they'll be handled.
+-Added new function 'preBattleSkillChanges(Doll, Echelon)' to 'Calculations.java'; this is used to set
+ up the T-Dolls passives due to their skills
+
+09/07/2020
+-Added a copy constructor to 'Effect.java'; this is so 'BattleStats' can have a copy of the T-Dolls
+ skill effects and be able to apply changes to it without it affecting the main 'Skill' object.
+
+12/07/2020
+-Added in missing 'Skill 2' functionality for the backend
+
 #LEAVE UI THINGS FOR NOW UNLESS NECESSARY
 
-#CURRENTLY DOING: Adding DPS calculations - (Implementing the 'Skill' class)
+#CURRENTLY DOING: Adding DPS calculations - (Reworking 'Calculation.java'. Setting up passives, buffs
+                                             and battle stats. Setting up PreBattleSkillChanges. Consider
+                                             making all/most variables in 'Effects.java' public. This
+                                             makes accessing them easier)
 
 
 TODO LIST ORDER

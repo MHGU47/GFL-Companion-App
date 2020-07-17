@@ -330,20 +330,20 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
             if (doll.getGridImageView() == gridImageView && doll.getID() != 0) {
                 c.CalculateStats(e);
                 Stats[0].setText(doll.getName());
-                Stats[1].setText(String.valueOf(doll.getHp()));
-                Stats[2].setText(String.valueOf(c.getFP(doll)));
-                Stats[3].setText(String.valueOf(c.getAcc(doll)));
-                Stats[4].setText(String.valueOf(c.getEva(doll)));
-                Stats[5].setText(String.valueOf(c.getRof(doll)));
-                Stats[6].setText(String.valueOf(c.getCrit(doll)));
-                Stats[7].setText(String.valueOf(c.getCritDmg(doll)));
-                Stats[8].setText(String.valueOf(c.getRounds(doll)));
-                Stats[9].setText(String.valueOf(c.getArmour(doll)));
-                Stats[10].setText(String.valueOf(c.getAP(doll)));
+                Stats[1].setText(String.valueOf(c.getStats(doll)[0]));
+                Stats[2].setText(String.valueOf(c.getStats(doll)[1]));
+                Stats[3].setText(String.valueOf(c.getStats(doll)[2]));
+                Stats[4].setText(String.valueOf(c.getStats(doll)[3]));
+                Stats[5].setText(String.valueOf(c.getStats(doll)[4]));
+                Stats[6].setText(String.valueOf(c.getStats(doll)[5]));
+                Stats[7].setText(String.valueOf(c.getStats(doll)[6]));
+                Stats[8].setText(String.valueOf(c.getStats(doll)[7]));
+                Stats[9].setText(String.valueOf(c.getStats(doll)[8]));
+                Stats[10].setText(String.valueOf(c.getStats(doll)[9]));
 
                 selectedDoll = doll.getEchelonPosition();
                 TDollLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getLevel(), true));
-                SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkillLevel(), false));
+                SkillLevelSelect.setSelection(u.LevelToSpinnerPosition(doll.getSkill_1Level(), false));
                 AffectionSelect.setSelection(u.AffectionToSpinnerPosition(doll.getAffection()));
                 EquipLevelSelectLevel_1.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(0).getLevel(),false));
                 EquipLevelSelectLevel_2.setSelection(u.LevelToSpinnerPosition(doll.getEquipment(1).getLevel(),false));
@@ -615,7 +615,7 @@ public class UI extends AppCompatActivity implements SelectionFragment.Selection
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
                 case R.id.skill_level_select:
-                    e.getDoll(selectedDoll - 1).setSkillLevel(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
+                    e.getDoll(selectedDoll - 1).setSkill_1Level(Integer.parseInt(((Spinner)findViewById(R.id.skill_level_select)).getSelectedItem().toString()));
                     displayStats(e.getDoll(selectedDoll - 1).getGridImageView());
                     break;
                 case R.id.affection_select:
