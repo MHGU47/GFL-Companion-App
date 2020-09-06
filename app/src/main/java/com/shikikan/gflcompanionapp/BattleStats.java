@@ -1,20 +1,26 @@
 package com.shikikan.gflcompanionapp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 public class BattleStats {
-    private int hp, fp, acc, eva, rof, crit, critDmg, ap, rounds, currentRounds, armour, nightView, targets;
+    float hp, fp, acc, eva, rof, rof_uncapped, crit, crit_uncapped, critDmg, ap, rounds, currentRounds, armour, nightView;//TODO: Temporary public variables
+    float CD;
 
-    private float CD;
-    float[] maxStats, minStats, skillBonus;
+    private int targets, busyLinks;
+
+    float[] maxStats, minStats;
+    private float[] skillBonus;
 
     private List<Float> preBattleStats, BattleStats_;
     private Map <String, Float> preBattleStats_, BattleStats__;
 
     private Timer normalAttackTimer, skillTimer;
-    private Timer[] timers;
+    private List<Timer> timers;
 
     private Shots shots;
 
@@ -25,20 +31,39 @@ public class BattleStats {
     private Skill skill_1, skill_2;
 
     private Effect[] skill_1Effects, skill_2Effects;
+    private List<Effect> effectQueue, actionQueue_Effect;
 
-    private Passive[] passives;
+    private List<Passive> passives, effectQueue_Passive, actionQueue_Passive;
 
-    private Buff[] buffs;
+    private List<Buff> buffs, effectQueue_Buff, actionQueue_Buff;
 
-    int reserveAmmo;
+    private List<Queue> effectQueue_Ver2;
+
+    private List<String> queueNames, actionQueueNames;
+
+    private List<Timer> effectQueue_Timer, actionQueue_Timer;
+
+    int reserveAmmo, numOfAttacks;
 
     boolean reserveAmmoMode;
 
     public BattleStats(Doll doll, List<Integer> stats) {
         this.doll = doll;
         u = new Utils();
+        buffs = new ArrayList<>();
         BattleStats__ = new HashMap<>();
         preBattleStats_ = new HashMap<>();
+        effectQueue = new ArrayList<>();
+        effectQueue_Ver2 = new ArrayList<>();
+        queueNames = new ArrayList<>();
+        effectQueue_Timer = new ArrayList<>();
+        effectQueue_Buff = new ArrayList<>();
+        effectQueue_Passive = new ArrayList<>();
+        actionQueueNames = new ArrayList<>();
+        actionQueue_Buff = new ArrayList<>();
+        actionQueue_Effect = new ArrayList<>();
+        actionQueue_Passive = new ArrayList<>();
+        actionQueue_Timer = new ArrayList<>();
 
         hp = stats.get(0);
         fp = stats.get(1);
@@ -52,8 +77,11 @@ public class BattleStats {
         armour = stats.get(8);
         ap = stats.get(9);
         nightView = stats.get(10);
+        numOfAttacks = 1;
 
         targets = doll.getTargets();
+
+        busyLinks = 0;
 
         doll.setCooldown(doll.getTileBuff("cd"));//Automatically alters the CD for use in calculations
         CD = doll.getCooldown(); //Altered CD, not raw CD
@@ -72,6 +100,8 @@ public class BattleStats {
         preBattleStats_.put("AP", (float) stats.get(9));
         preBattleStats_.put("NightView", (float) stats.get(10));
 
+        preBattleStats_.put("CD", CD);
+
 
 
 
@@ -81,13 +111,11 @@ public class BattleStats {
 
         if(doll.getType() == 6){
             if(doll.hasSlug()){
-                doll.setTargets(6);
-                //preBattleStats.set(1, preBattleStats.get(1) * 3);
+                doll.setTargets(1);
                 preBattleStats_.put("FP", preBattleStats_.get("FP") * 3);
             }
             else doll.setTargets(3);
         }
-        //preBattleStats.add((float) targets);//TODO: Alter this so targets are only ever saved if the selected T-Doll is an SG
 
         preBattleStats_.put("CD", doll.getCooldown());
         preBattleStats_.put("Targets", (float) doll.getTargets());
@@ -188,11 +216,14 @@ public class BattleStats {
         BattleStats__.put("Skill Damage", 0f);
 
         skill_1 = new Skill(doll.getSkill_1());
-        skill_2 = new Skill(doll.getSkill_2());
         skill_1Effects = new Effect[skill_1.getEffects().length];
-        skill_2Effects = new Effect[skill_2.getEffects().length];
         for(int i = 0; i < skill_1.getEffects().length; i++) skill_1Effects[i] = new Effect(skill_1.getEffects()[i]);
-        for(int i = 0; i < skill_2.getEffects().length; i++) skill_2Effects[i] = new Effect(skill_2.getEffects()[i]);
+
+        if(doll.getSkill_2() != null){
+            skill_2 = new Skill(doll.getSkill_2());
+            skill_2Effects = new Effect[skill_2.getEffects().length];
+            for(int i = 0; i < skill_2.getEffects().length; i++) skill_2Effects[i] = new Effect(skill_2.getEffects()[i]);
+        }
 
 
         skillBonus = new float[]{
@@ -261,7 +292,8 @@ public class BattleStats {
         };
 
         if(doll.getPassives() != null){
-            for(int i = 0; i < doll.getPassives().length; i++) passives[i] = new Passive(doll.getPassives()[i]);
+            passives = new ArrayList<>();
+            passives.addAll(Arrays.asList(doll.getPassives()));
             for(Passive passive : passives){
                 if(passive.getInterval() != null) passive.startTime = 1;
                 passive.level = passive.isSkill2Passive() ? doll.getSkill_2Level() : doll.getLevel();
@@ -272,7 +304,7 @@ public class BattleStats {
             }
         }
         else{
-            passives = new Passive[]{new Passive()};
+            passives = new ArrayList<>();
         }
 
         BattleStats__.put("NumOfAttacks" , 1f);
@@ -280,8 +312,8 @@ public class BattleStats {
         if (doll.getFramesPerAttack() != 0) normalAttackTimer = new Timer("Normal Attack", doll.getFramesPerAttack());
         else normalAttackTimer = new Timer("Normal Attack", (int) Math.floor(50 * (30f / doll.getRof())));
 
-        timers = new Timer[3];
-        timers[0] = normalAttackTimer;//TODO: This is only supposed to be added if the user has set the skill as active
+        timers = new ArrayList<>();
+        timers.add(normalAttackTimer);//TODO: This is only supposed to be added if the user has set the skill as active(?) Pretty sure this refers to the skill timer
 
         skillTimer = new Timer("Skill 1", Math.round(skill_1.getInitialCD() * 30 * (1 - preBattleStats_.get("CD") / 100)));
 
@@ -307,8 +339,12 @@ public class BattleStats {
         return minStats;
     }
 
-    public void setBuffs(Buff[] buffs){
-        this.buffs = buffs;
+    public void addBuff(Buff buff){
+        buffs.add(buff);
+    }
+
+    public List<Buff> getBuffs(){
+        return buffs;
     }
 
     public Skill getSkill_1() {
@@ -330,6 +366,10 @@ public class BattleStats {
         this.skill_1Effects = effects;
     }
 
+    public Skill getSkill_2() {
+        return skill_2;
+    }
+
     public Effect[] getSkill_2Effects() {
         return skill_2Effects;
     }
@@ -345,10 +385,10 @@ public class BattleStats {
         this.skill_2Effects = effects;
     }
 
-    public void setPassives(Passive[] passives){
-        this.passives = passives;
+    public void addPassive(Passive passive){
+        passives.add(passive);
     }
-    public Passive[] getPassives() {
+    public List<Passive> getPassives() {
         return passives;
     }
 
@@ -360,12 +400,19 @@ public class BattleStats {
         shots.hits = hits;
     }
 
+    public int getHits(){
+        return shots.hits;
+    }
+
     public void setMisses(int misses){
         shots.misses = misses;
     }
 
     public void setTotalShots(int totalShots){
         shots.total = totalShots;
+    }
+    public int getTotalShots(){
+        return shots.total;
     }
 
     public void setTargets(int targets) {
@@ -375,13 +422,174 @@ public class BattleStats {
         return targets;
     }
 
+    public void setBusyLinks(int busyLinks){
+        this.busyLinks = busyLinks;
+    }
+    public int getBusyLinks(){
+        return busyLinks;
+    }
+
+    public void addTimer(Timer timer){
+        timers.add(timer);
+    }
+    public List<Timer> getTimers(){
+        return timers;
+    }
+    public Timer getTimer(String timer){
+        for(Timer t : timers){
+            if(t.getType().equals(timer)) return t;
+        }
+        return null;
+    }
+
+    public void addToEffectQueue(Effect effect){
+        effectQueue.add(effect);
+    }
+
+    public void addToEffectQueue(Timer timer){
+        effectQueue_Timer.add(timer);
+    }
+
+    public void addToEffectQueue(Buff buff){
+        effectQueue_Buff.add(buff);
+    }
+
+    public void addToEffectQueue(Passive passive){
+        effectQueue_Passive.add(passive);
+    }
+
+    public List<Effect> getEffectQueue() {
+        return effectQueue;
+    }
+
+    public List<Timer> getEffectQueue_Timer() {
+        return effectQueue_Timer;
+    }
+
+    public List<Buff> getEffectQueue_Buff(){
+        return effectQueue_Buff;
+    }
+
+    public List<Passive> getEffectQueue_Passive(){
+        return effectQueue_Passive;
+    }
 
 
+    public void addToActionQueue(Effect effect){
+        effectQueue.add(effect);
+    }
+
+    public void addToActionQueue(Timer timer){
+        effectQueue_Timer.add(timer);
+    }
+
+    public void addToActionQueue(Buff buff){
+        effectQueue_Buff.add(buff);
+    }
+
+    public void addToActionQueue(Passive passive){
+        effectQueue_Passive.add(passive);
+    }
+
+    public List<Effect> getActionQueue_EffectQueue() {
+        return actionQueue_Effect;
+    }
+
+    public List<Timer> getActionQueue_Timer() {
+        return actionQueue_Timer;
+    }
+
+    public List<Buff> getActionQueue_Buff(){
+        return actionQueue_Buff;
+    }
+
+    public List<Passive> getActionQueue_Passive(){
+        return actionQueue_Passive;
+    }
 
 
+    public void addToEffectQueue_Ver2(Timer timer){
+        effectQueue_Ver2.add(new Queue(timer));
+    }
 
+    public void addToEffectQueue_Ver2(Buff buff){
+        effectQueue_Ver2.add(new Queue(buff));
+    }
 
-//    public void setBusyLinks(int busyLinks) {
+    public void addToEffectQueue_Ver2(Passive passive){
+        effectQueue_Ver2.add(new Queue(passive));
+    }
+
+    public void addToEffectQueue_Ver2(Effect effect){
+        effectQueue_Ver2.add(new Queue(effect));
+    }
+
+    public List<Queue> getEffectQueue_Ver2(){
+        return effectQueue_Ver2;
+    }
+
+    public void addToQueueNames(String name){
+        queueNames.add(name);
+    }
+
+    public List<String> getQueueNames(){
+        return queueNames;
+    }
+
+    public void addToActionNames(String name){
+        actionQueueNames.add(name);
+    }
+
+    public List<String> getActionQueueNames(){
+        return actionQueueNames;
+    }
+
+    public float[] getAllSkillBonuses() {
+        return skillBonus;
+    }
+
+    public float getSkillBonus(String name) {
+        switch(name){
+            case "fp": return skillBonus[0];
+            case "acc": return skillBonus[1];
+            case "eva": return skillBonus[2];
+            case "rof": return skillBonus[3];
+            case "critdmg": return skillBonus[4];
+            case "crit": return skillBonus[5];
+            case "rounds": return skillBonus[6];
+            case "armour": return skillBonus[7];
+            case "ap": return skillBonus[8];
+            //case "cd":
+            default: return skillBonus[9];
+        }
+    }
+
+    public void setSkillBonus(String name, float stat){
+        //0 FP
+        //1 Acc
+        //2 Eva
+        //3 Rof
+        //4 CritDmg
+        //5 Crit
+        //6 Rounds
+        //7 Armour
+        //8 AP
+        //9 Skill CD
+        switch(name){
+            case "fp": skillBonus[0] = stat; break;
+            case "acc": skillBonus[1] = stat; break;
+            case "eva": skillBonus[2] = stat; break;
+            case "rof": skillBonus[3] = stat; break;
+            case "critdmg": skillBonus[4] = stat; break;
+            case "crit": skillBonus[5] = stat; break;
+            case "rounds": skillBonus[6] = stat; break;
+            case "armour": skillBonus[7] = stat; break;
+            case "ap": skillBonus[8] = stat; break;
+            case "cd": skillBonus[9] = stat; break;
+        }
+    }
+
+    //    public void setBusyLinks(int busyLinks) {
 //        this.busyLinks = busyLinks;
 //    }
 //    public int getBusyLinks() {

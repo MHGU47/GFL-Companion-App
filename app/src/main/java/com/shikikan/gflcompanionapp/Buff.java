@@ -2,7 +2,7 @@ package com.shikikan.gflcompanionapp;
 
 public class Buff {
 
-    private int timeLeft, level, duration, attacksLeft, stacks, stacksToAdd, maxStacks, hitCount;
+    private float timeLeft, level, duration, attacksLeft, stacks, stacksToAdd, maxStacks, hitCount;
     private int[] setTime;
     private float fp, rof, eva;
     private float[] multiplier;
@@ -22,10 +22,10 @@ public class Buff {
         this.effect = effect;
     }
 
-    public void setTimeLeft(int timeLeft){
+    public void setTimeLeft(float timeLeft){
         this.timeLeft = timeLeft;
     }
-    public int getTimeLeft() {
+    public float getTimeLeft() {
         return timeLeft;
     }
 
@@ -35,5 +35,17 @@ public class Buff {
 
     public Effect getEffect() {
         return effect;
+    }
+
+    public boolean isStatBuff(){
+        return effect.isStatBuff();
+    }
+
+    public boolean isStackable() {
+        return effect.isStackable();
+    }
+
+    public int getBuffCounter(){
+        return effect.buffCounter;
     }
 }

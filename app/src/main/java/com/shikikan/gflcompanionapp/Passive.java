@@ -8,21 +8,21 @@ public class Passive {
 
     private String type, target, name, trigger, modifySkill;
     private int busyLinks, attacksLeft, tick, targets, fixedTime, maxStacks, stacks,
-            victories, stacksRequired, uses, hits, dollID;
+            victories, uses, hits, dollID;
     private float delay, radius, aoe_radius, aoe_multiplier;
     private boolean stun, night, boss, requirements, sureCrit, refreshDuration, armoured, ignoreArmour,
             piercing, stackable, canCrit, aoe, aoe_canCrit, aoe_sureCrit, triggerPythonPassive,
             skill2Passive;
 
-    private int[] rounds, hitCount, fixedDamage, interval, armour, vulnerability, stacksToAdd, stackChance,
-            skillDamageBonus, ap, butterCream, extraCritDamage;
-    private float[] fp, acc, eva, rof, crit, critDmg, movespeed, duration, multiplier;
+    private int[] rounds, hitCount, fixedDamage, armour, vulnerability, stacksToAdd, stackChance,
+            skillDamageBonus, ap, butterCream, extraCritDamage, stacksRequired;
+    private float[] fp, acc, eva, rof, crit, critDmg, movespeed, duration, interval, multiplier;
 
     private Effect effect;
     private Effect[] effects;
 
     float startTime;
-    int level;
+    int level, timeleft;
 
     //stat, after(another skillEffects class)
 
@@ -49,7 +49,13 @@ public class Passive {
                     case "fixedTime": fixedTime = rawPassive.getInt("fixedTime"); break;
                     case "maxStacks": maxStacks = rawPassive.getInt("maxStacks"); break;
                     case "stacks": stacks = rawPassive.getInt("stacks"); break;
-                    case "stacksRequired": stacksRequired = rawPassive.getInt("stacksRequired"); break;
+                    case "stacksRequired":
+                        JSONArray rawStacksRequired = rawPassive.getJSONArray("stacksRequired");
+                        stacksRequired = new int[rawStacksRequired.length()];
+                        for (int index = 0; index < rawStacksRequired.length(); index++) {
+                            stacksRequired[index] = rawStacksRequired.getInt(index);
+                        }
+                        break;
                     case "attacksLeft": attacksLeft = rawPassive.getInt("attacksLeft"); break;
                     case "victories": victories = rawPassive.getInt("victories"); break;
                     case "hits": hits = rawPassive.getInt("hits"); break;
@@ -225,7 +231,7 @@ public class Passive {
                             }
                         }
                         catch (Exception e){
-                            vulnerability = new int[]{rawPassive.getInt("vulnerability")};
+                            extraCritDamage = new int[]{rawPassive.getInt("extraCritDamage")};
                         }
                         break;
                     case "vulnerability":
@@ -263,14 +269,14 @@ public class Passive {
                         break;
                     case "interval":
                         try {
-                            JSONArray rawInterval = rawPassive.getJSONArray("multiplier");
-                            interval = new int[rawInterval.length()];
+                            JSONArray rawInterval = rawPassive.getJSONArray("interval");
+                            interval = new float[rawInterval.length()];
                             for (int index = 0; index < rawInterval.length(); index++) {
                                 interval[index] = rawInterval.getInt(index);
                             }
                         }
                         catch (Exception e){
-                            interval = new int[]{rawPassive.getInt("interval")};
+                            interval = new float[]{rawPassive.getInt("interval")};
                         }
                         break;
                     case "multiplier":
@@ -324,83 +330,87 @@ public class Passive {
                         boss = rawRequirements.has("boss") && rawRequirements.getBoolean("boss");
                 }
             }
-        } catch (JSONException e) {
+        }
+        catch (JSONException e) {
             e.printStackTrace();
         }
     }
     Passive(Passive passive){
         //Strings
-        this.type = getType();
-        this.target = getTarget();
-        this.name = getName();
-        this.trigger = getTrigger();
-        this.modifySkill = getModifySkill();
+        this.type = passive.getType();
+        this.target = passive.getTarget();
+        this.name = passive.getName();
+        this.trigger = passive.getTrigger();
+        this.modifySkill = passive.getModifySkill();
 
         //ints
-        this.busyLinks = getBusyLinks();
-        this.attacksLeft = getAttacksLeft();
-        this.tick = getTick();
-        this.targets = getTargets();
-        this.fixedTime = getFixedTime();
-        this.maxStacks = getMaxStacks();
-        this.stacks = getStacks();
-        this.victories = getVictories();
-        this.stacksRequired = getStacksRequired();
-        this.uses = getUses();
-        this.hits = getHits();
-        this.dollID = getDollID();
+        this.busyLinks = passive.getBusyLinks();
+        this.attacksLeft = passive.getAttacksLeft();
+        this.tick = passive.getTick();
+        this.targets = passive.getTargets();
+        this.fixedTime = passive.getFixedTime();
+        this.maxStacks = passive.getMaxStacks();
+        this.stacks = passive.getStacks();
+        this.victories = passive.getVictories();
+        this.stacksRequired = passive.getStacksRequired();
+        this.uses = passive.getUses();
+        this.hits = passive.getHits();
+        this.dollID = passive.getDollID();
 
         //floats
-        this.delay = getDelay();
-        this.radius = getRadius();
-        this.aoe_radius = getAoe_radius();
-        this.aoe_multiplier = getAoe_multiplier();
+        this.delay = passive.getDelay();
+        this.radius = passive.getRadius();
+        this.aoe_radius = passive.getAoe_radius();
+        this.aoe_multiplier = passive.getAoe_multiplier();
 
         //booleans
-        this.stun = isStun();
-        this.night = isNight();
-        this.boss = isBoss();
-        this.requirements = isRequirements();
-        this.sureCrit = isSureCrit();
-        this.refreshDuration = isRefreshDuration();
-        this.armoured = isArmoured();
-        this.ignoreArmour = isIgnoreArmour();
-        this.piercing = isPiercing();
-        this.stackable =  isStackable();
-        this.canCrit = isCanCrit();
-        this.aoe = isAoe();
-        this.aoe_canCrit = isAoe_canCrit();
-        this.aoe_sureCrit = isAoe_sureCrit();
-        this.triggerPythonPassive = isTriggerPythonPassive();
-        this.skill2Passive = isSkill2Passive();
+        this.stun = passive.isStun();
+        this.night = passive.isNight();
+        this.boss = passive.isBoss();
+        this.requirements = passive.isRequirements();
+        this.sureCrit = passive.isSureCrit();
+        this.refreshDuration = passive.isRefreshDuration();
+        this.armoured = passive.isArmoured();
+        this.ignoreArmour = passive.isIgnoreArmour();
+        this.piercing = passive.isPiercing();
+        this.stackable =  passive.isStackable();
+        this.canCrit = passive.isCanCrit();
+        this.aoe = passive.isAoe();
+        this.aoe_canCrit = passive.isAoe_canCrit();
+        this.aoe_sureCrit = passive.isAoe_sureCrit();
+        this.triggerPythonPassive = passive.isTriggerPythonPassive();
+        this.skill2Passive = passive.isSkill2Passive();
 
         //int arrays
-        this.rounds = getRounds();
-        this.hitCount = getHitCount();
-        this.fixedDamage = getFixedDamage();
-        this.interval = getInterval();
-        this.armour = getArmour();
-        this.vulnerability = getVulnerability();
-        this.stacksToAdd = getStacksToAdd();
-        this.stackChance = getStackChance();
-        this.skillDamageBonus = getSkillDamageBonus();
-        this.ap = getAp();
-        this.butterCream = getButterCream();
-        this.extraCritDamage = getExtraCritDamage();
+        this.rounds = passive.getRounds();
+        this.hitCount = passive.getHitCount();
+        this.fixedDamage = passive.getFixedDamage();
+        this.interval = passive.getInterval();
+        this.armour = passive.getArmour();
+        this.vulnerability = passive.getVulnerability();
+        this.stacksToAdd = passive.getStacksToAdd();
+        this.stackChance = passive.getStackChance();
+        this.skillDamageBonus = passive.getSkillDamageBonus();
+        this.ap = passive.getAp();
+        this.butterCream = passive.getButterCream();
+        this.extraCritDamage = passive.getExtraCritDamage();
 
         //float arrays
-        this.fp = getFp();
-        this.acc = getAcc();
-        this.eva = getEva();
-        this.rof = getRof();
-        this.crit = getCrit();
-        this.critDmg = getCritDmg();
-        this.movespeed = getMovespeed();
-        this.duration = getDuration();
-        this.multiplier = getMultiplier();
+        this.fp = passive.getFp();
+        this.acc = passive.getAcc();
+        this.eva = passive.getEva();
+        this.rof = passive.getRof();
+        this.crit = passive.getCrit();
+        this.critDmg = passive.getCritDmg();
+        this.movespeed = passive.getMovespeed();
+        this.duration = passive.getDuration();
+        this.multiplier = passive.getMultiplier();
 
-        //this.effect
-        this.effects = getEffects();
+        this.effects = passive.getEffects();
+
+        this.effect = passive.effect;
+        this.startTime = passive.startTime;
+        this.level = passive.level;
     }
     Passive(){
 
@@ -443,7 +453,7 @@ public class Passive {
     public int getStacks() {
         return stacks;
     }
-    public int getStacksRequired() {
+    public int[] getStacksRequired() {
         return stacksRequired;
     }
     public int getVictories() {
@@ -530,9 +540,6 @@ public class Passive {
     public int[] getFixedDamage(){
         return fixedDamage;
     }
-    public int[] getInterval() {
-        return interval;
-    }
     public int[] getArmour(){
         return armour;
     }
@@ -584,6 +591,9 @@ public class Passive {
     }
     public float[] getMultiplier(){
         return multiplier;
+    }
+    public float[] getInterval() {
+        return interval;
     }
 
 //    public Passive getAfterEffect() {

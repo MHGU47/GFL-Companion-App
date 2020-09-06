@@ -508,6 +508,55 @@
 12/07/2020
 -Added in missing 'Skill 2' functionality for the backend
 
+15/08/2020
+-Fixed crashing when any T-Doll was selected; this was caused by array for 'afterEffects'
+ not properly being created.
+-Fixed crashing when Python was selected; this was caused by the 'Passive' constructor
+ not using the parameter to get the information needed, as well as not properly creating
+ arrays to store things in.
+
+23/08/2020
+-Finished algorithm for ticking and removing buffs in 'Calculations.java'
+-Added new functions to 'Calculation.java'; 'triggerPassive(String, Doll, Enemy, int)' and
+ 'activateBuff(Doll, Effect, Enemy)' were added. 'activateBuff' will be altered later on, most likely
+ by have an extra parameter added to handle 'Buff' objects as a parameter. These functions are pretty
+ self-explanatory.
+
+26/08/2020
+-Created new class 'Enemy'; this will be used to create enemy objects
+
+27/08/2020
+-Added new function 'getBuffTargets(Doll, Effect, Enemy)' to 'Calculation.java'; this will be used
+ return the T-Dolls that receive buffs and enemies that get debuffed.
+-Added new function 'calculateSkillBonus(int)' to 'Calculation.java'; this is used to properly assign
+ the skill bonus a T-Doll gets from using a skill.
+-Added new function 'calculateBattleStats(int)' to 'Calculation.java'; this is used to properly assign
+ the stats to be used in battle.
+
+28/08/2020
+-Changed 'Buffs' and 'Passives' arrays in 'BattleStats.java' into a 'List'; this is so that editing
+ them dynamically is possible.
+
+29/08/2020
+-Added new class 'Queue.java'; this is to essentially a wrapper to hold the different object that will
+ be held in the action queue.
+
+02/09/2020
+-Made new lists for 'effectQueue's in 'BattleStats.java'; this is so they can properly be stored and
+ used when needed. A String list was also created in order to determine which queue is next to be used.
+
+03/09/2020
+-Altered function 'getBuffTargets(Doll, Effect, Enemy)' in 'Calculation.java'; it now takes an Effect
+ array instead of a single effect. This is so it can take passive effects too. This may need to be changed
+ in the future though.
+
+06/09/2020
+-Mostly finished implementing 'normalAttack' segment of 'perform actions' part of 'simulateBattle()'.
+ At this point, 'Enemy.java' needs to be implemented properly, as well as some boolean variables.
+
+
+-Ver2 of queues should not be used and should remain commented out as of 02/09/2020
+
 #LEAVE UI THINGS FOR NOW UNLESS NECESSARY
 
 #CURRENTLY DOING: Adding DPS calculations - (Reworking 'Calculation.java'. Setting up passives, buffs

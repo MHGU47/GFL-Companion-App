@@ -154,7 +154,8 @@ public class Doll {
 
             skill_1 = new Skill(name_skill_1, icon_name_skill_1, tooltip_skill_1, rawSkill_1);
             //TODO: Rewrite how these are passed in. Use an array to hold everything except 'rawSkill'
-            skill_2 = new Skill(name_skill_2, icon_name_skill_2, tooltip_skill_2, rawSkill_2);
+            if(name_skill_2 != null)
+                skill_2 = new Skill(name_skill_2, icon_name_skill_2, tooltip_skill_2, rawSkill_2);
             buffs = new ArrayList<>();
             //passives = new ArrayList<>();
             try{
@@ -827,12 +828,12 @@ public class Doll {
 
     /*public void setBusyLinks(int busyLinks) {
         this.busyLinks = busyLinks;
-    }
+    }*/
     public int getBusyLinks() {
         return busyLinks;
     }
 
-    public void setSkillDamage(int skillDamage) {
+    /*public void setSkillDamage(int skillDamage) {
         this.skillDamage = skillDamage;
     }
     public int getSkillDamage() {
@@ -914,7 +915,7 @@ public class Doll {
         return passives;
     }
 
-    public BattleStats getBS(){
+    public BattleStats BS(){
         return bs;
     }
 

@@ -10,21 +10,23 @@ import java.util.List;
 public class Effect {
     private String type, target, name, trigger, modifySkill;
     private int busyLinks, attacksLeft, tick, targets, fixedTime, maxStacks, stacks, interval,
-            victories, hits;
-    private float delay, radius, aoe_radius, aoe_multiplier;
+            victories, hits, uses;
+    private float radius, aoe_radius;
     private boolean stun, night, boss, sureCrit, refreshDuration, armoured, ignoreArmour,
             piercing, stackable, canCrit, aoe, aoe_canCrit, aoe_sureCrit, triggerPythonPassive, usable;
 
-    private List<String> requirements;
+    private List<String> requirements, allStats;
     private int[] rounds, hitCount, fixedDamage, armour, vulnerability, stacksToAdd, stackChance,
-            skillDamageBonus, ap, butterCream;
-    private float[] fp, acc, eva, rof, crit, critDmg, movespeed, duration, multiplier;
+            skillDamageBonus, ap, butterCream, extraAttackChance;
+    private float[] fp, acc, eva, rof, crit, critDmg, movespeed, duration, multiplier, delay,
+            aoe_multiplier, setTime;
 
     private Effect[] afterEffects;
     private Effect effect_2;
 
     //For use with 'BattleStats.java'. Gives the effect object the level of the passive object it is being used with
-    int level, dollID;
+    int level, dollID, buffCounter = 0;
+    private boolean statBuff = false;
 
     //stat, after(another skillEffects class)
 
@@ -55,11 +57,38 @@ public class Effect {
                     case "interval": interval = rawEffects.getInt("interval"); break;
                     case "victories": victories = rawEffects.getInt("victories"); break;
                     case "hits": hits = rawEffects.getInt("hits"); break;
+                    case "uses": hits = rawEffects.getInt("uses"); break;
 
-                    case "delay": delay = (float) rawEffects.getDouble("delay"); break;
+                    case "delay":
+
+                        try {
+                            JSONArray rawDelay = rawEffects.getJSONArray("delay");
+                            delay = new float[rawDelay.length()];
+                            for (int stat = 0; stat < rawDelay.length(); stat++) {
+                                delay[stat] = (float) rawDelay.getDouble(stat);
+                            }
+                        }
+                        catch (Exception e){
+                            delay = new float[]{(float)rawEffects.getDouble("delay")};
+                        }
+
+                        break;
                     case "radius": radius = (float) rawEffects.getDouble("radius"); break;
                     case "aoe_radius": aoe_radius = (float) rawEffects.getDouble("aoe_radius"); break;
-                    case "aoe_multiplier": aoe_multiplier = (float) rawEffects.getDouble("aoe_multiplier"); break;
+                    case "aoe_multiplier":
+
+                        try {
+                            JSONArray rawAOE_Multiplier = rawEffects.getJSONArray("aoe_multiplier");
+                            aoe_multiplier = new float[rawAOE_Multiplier.length()];
+                            for (int stat = 0; stat < rawAOE_Multiplier.length(); stat++) {
+                                aoe_multiplier[stat] = (float) rawAOE_Multiplier.getDouble(stat);
+                            }
+                        }
+                        catch (Exception e){
+                            aoe_multiplier = new float[]{(float)rawEffects.getDouble("aoe_multiplier")};
+                        }
+
+                        break;
 
 
                     case "stun": stun = rawEffects.getBoolean("stun"); break;
@@ -76,6 +105,8 @@ public class Effect {
                     case "triggerPythonPassive": triggerPythonPassive = rawEffects.getBoolean("triggerPythonPassive"); break;
 
                     case "stat":
+                        statBuff = true;
+                        buffCounter++;
                         JSONObject rawStat = rawEffects.getJSONObject("stat");
                         JSONArray names = rawStat.names();
                         if (names == null) break;
@@ -187,6 +218,17 @@ public class Effect {
                                     }
                                     break;
                             }
+                                    //1,//FP
+                                    //1,//Acc
+                                    //1,//Eva
+                                    //1,//Rof
+                                    //1,//CritDmg
+                                    //1,//Crit
+                                    //0,//Rounds
+                                    //1,//Armour
+                                    //1,//AP
+                                    //1,//Skill CD
+                            allStats.add(names.getString(index));
                         }
                         break;
                     case "effect":
@@ -199,6 +241,7 @@ public class Effect {
                             afterEffects = new Effect[]{new Effect(rawAfter)};
                         }catch (Exception e){
                             JSONArray rawAfter = rawEffects.getJSONArray("after");
+                            afterEffects = new Effect[rawAfter.length()];
                             for(int index = 0; index < rawAfter.length(); index++){
                                 afterEffects[index] = new Effect(rawAfter.getJSONObject(index));
                             }
@@ -210,6 +253,20 @@ public class Effect {
                         butterCream = new int[rawButterCream.length()];
                         for (int index = 0; index < rawButterCream.length(); index++) {
                             butterCream[index] = rawButterCream.getInt(index);
+                        }
+                        break;
+                    case "extraAttackChance":
+                        JSONArray rawExtraAttackChance = rawEffects.getJSONArray("extraAttackChance");
+                        extraAttackChance = new int[rawExtraAttackChance.length()];
+                        for (int index = 0; index < rawExtraAttackChance.length(); index++) {
+                            extraAttackChance[index] = rawExtraAttackChance.getInt(index);
+                        }
+                        break;
+                    case "setTime":
+                        JSONArray rawSetTime = rawEffects.getJSONArray("setTime");
+                        setTime = new float[rawSetTime.length()];
+                        for (int index = 0; index < rawSetTime.length(); index++) {
+                            setTime[index] = rawSetTime.getInt(index);
                         }
                         break;
                     case "skillDamageBonus":
@@ -312,7 +369,7 @@ public class Effect {
                         }
                 }
             }
-            }
+        }
         catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -334,6 +391,7 @@ public class Effect {
         this.interval = effect.getInterval();
         this.victories = effect.getVictories();
         this.hits = effect.getHits();
+        this.uses = effect.getUses();
 
         this.delay = effect.getDelay();
         this.radius = effect.getRadius();
@@ -368,6 +426,7 @@ public class Effect {
         this.skillDamageBonus = effect.getSkillDamageBonus();
         this.ap = effect.getAp();
         this.butterCream = effect.getButterCream();
+        this.extraAttackChance = effect.getExtraAttackChance();
 
         this.fp = effect.getFp();
         this.acc = effect.getAcc();
@@ -378,6 +437,7 @@ public class Effect {
         this.movespeed = effect.getMovespeed();
         this.duration = effect.getDuration();
         this.multiplier = effect.getMultiplier();
+        this.setTime = effect.getSetTime();
 
         this.afterEffects = effect.getAfterEffects();
         this.effect_2 = effect.getEffect_2();
@@ -405,12 +465,18 @@ public class Effect {
     public String getModifySkill() {
         return modifySkill;
     }
+    public void setModifySkill(String modifySkill){
+        this.modifySkill = modifySkill;
+    }
 
     public int getBusyLinks() {
         return busyLinks;
     }
     public int getAttacksLeft() {
         return attacksLeft;
+    }
+    public void setAttacksLeft(int attacksLeft){
+        this.attacksLeft = attacksLeft;
     }
     public int getTick() {
         return tick;
@@ -439,9 +505,18 @@ public class Effect {
     public int getHits() {
         return hits;
     }
+    public void setUses(int uses){
+        this.uses = uses;
+    }
+    public int getUses() {
+        return uses;
+    }
 
-    public float getDelay() {
+    public float[] getDelay() {
         return delay;
+    }
+    public void setDelay(float[] delay){
+        this.delay = delay;
     }
     public float getRadius() {
         return radius;
@@ -449,7 +524,7 @@ public class Effect {
     public float getAoe_radius() {
         return aoe_radius;
     }
-    public float getAoe_multiplier() {
+    public float[] getAoe_multiplier() {
         return aoe_multiplier;
     }
 
@@ -540,6 +615,9 @@ public class Effect {
     public int[] getButterCream(){
         return butterCream;
     }
+    public int[] getExtraAttackChance(){
+        return extraAttackChance;
+    }
 
     public float[] getFp(){
         return fp;
@@ -583,11 +661,60 @@ public class Effect {
     public void setMultiplier(float[] multiplier){
         this.multiplier = multiplier;
     }
+    public void setSetTime(float[] setTime){
+        this.setTime = setTime;
+    }
+    public float[] getSetTime() {
+        return setTime;
+    }
 
     public Effect[] getAfterEffects() {
         return afterEffects;
     }
     public Effect getEffect_2() {
         return effect_2;
+    }
+
+    public void setStackChance(int[] stackChance) {
+        this.stackChance = stackChance;
+    }
+
+    public boolean isStatBuff(){
+        return statBuff;
+    }
+
+    public List<String> getAllStatsNames(){
+        return allStats;
+    }
+
+    public float[] getBuff(String buff){
+        float[] temp;
+        switch(buff){
+            case "fp": return fp;
+            case "acc": return acc;
+            case "eva": return eva;
+            case "rof": return rof;
+            case "critDmg": return critDmg;
+            case "crit": return crit;
+            case "rounds":
+                temp = new float[rounds.length];
+                for(int i = 0; i < temp.length; i++){
+                    temp[i] = (float) rounds[i];
+                }
+                return temp;
+            case "armour":
+                temp = new float[armour.length];
+                for(int i = 0; i < temp.length; i++){
+                    temp[i] = (float) armour[i];
+                }
+                return temp;
+            //case "ap":
+            default:
+                temp = new float[ap.length];
+                for(int i = 0; i < temp.length; i++){
+                    temp[i] = (float) ap[i];
+                }
+                return temp;
+        }
     }
 }
